@@ -4,6 +4,8 @@ Plugin Name: Easy Maintenance Mode with Countdown
 Description: Enable maintenance mode with countdown, custom logo and message.
 Version: 1.0
 Author: Abdul Nasir
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
 if ( ! defined('ABSPATH')) {

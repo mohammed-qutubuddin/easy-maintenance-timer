@@ -1,11 +1,13 @@
 === Easy Maintenance Mode with Countdown ===
 Contributors: Mohammed Qutubuddin Nasir
-Tags: maintenance mode, countdown, coming soon, under construction, admin, easy, simple
+Tags: maintenance mode, countdown, coming soon, under construction, easy
 Requires at least: 5.0
-Tested up to: 6.8.2
+Tested up to: 6.8
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Easily enable maintenance mode on your site with a customizable countdown timer, logo and message.
 
 == Description ==
 A super simple WordPress plugin puts your website into maintenance or under construction mode - along with displaying a countdown timer. It's possible to set your maintenance message, logo and end date/time from the plugin's settings page. No bloat, no confusion - Surf One Click Me On/Off!

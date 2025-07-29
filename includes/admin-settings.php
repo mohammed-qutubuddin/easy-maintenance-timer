@@ -6,18 +6,36 @@ add_action('admin_menu', function() {
     );
 });
 
-add_action('admin_init', function() {
+/*add_action('admin_init', function() {
     register_setting('emm_settings_group', 'emm_countdown_date');
+    'sanitize_callback' => 'sanitize_text_field'
     register_setting('emm_settings_group', 'emm_maint_message');
     register_setting('emm_settings_group', 'emm_logo_url');
     register_setting('emm_settings_group', 'emm_enabled');
+});*/
+add_action('admin_init', function() {
+    register_setting('emm_settings_group', 'emm_countdown_date', [
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    register_setting('emm_settings_group', 'emm_maint_message', [
+        'sanitize_callback' => 'sanitize_text_field'
+    ]);
+    register_setting('emm_settings_group', 'emm_logo_url', [
+        'sanitize_callback' => 'esc_url_raw'
+    ]);
+    register_setting('emm_settings_group', 'emm_enabled', [
+        'sanitize_callback' => function($value) {
+            return $value == '1' ? '1' : '0';
+        }
+    ]);
 });
+
 
 
 function emm_settings_page_callback() {
 $default_msg  = "Site Under Maintenance. Please check back soon.";
 $default_logo = plugin_dir_url(__FILE__).'../assets/img/default-logo.jpg';
-$default_date = date('Y-m-d\TH:i', strtotime('+1 day'));
+$default_date = gmdate('Y-m-d\TH:i', strtotime('+1 day'));
 $value_msg = get_option('emm_maint_message', $default_msg);
 if (!get_option('emm_maint_message')) {
     $value_msg = $default_msg;
@@ -47,7 +65,7 @@ if (!$value_date) {
                     <th>Countdown End Date/Time</th>
                     <td>
                         <input type="datetime-local" name="emm_countdown_date" class="emm-dependent" 
-                        min="<?php echo date('Y-m-d\TH:i'); ?>" 
+                        min="<?php echo esc_attr( gmdate('Y-m-d\TH:i') ); ?>"
                         value="<?php echo esc_attr($value_date); ?>" 
                         required />
                     </td>
@@ -90,5 +108,5 @@ if (!$value_date) {
 add_action('admin_enqueue_scripts', function($hook) {
     if($hook != 'settings_page_emm_settings') return;
     wp_enqueue_media();
-    wp_enqueue_script('emm-admin-script', plugin_dir_url(__FILE__).'../assets/js/admin.js', array('jquery'), null, true);
+    wp_enqueue_script('emm-admin-script', plugin_dir_url(__FILE__).'../assets/js/admin.js', array('jquery'),'1.0.0', true);
 });
