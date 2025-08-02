@@ -1,4 +1,4 @@
-=== Easy Maintenance Mode with Countdown ===
+=== Easy Maintenance Timer ===
 Contributors: Mohammed Qutubuddin Nasir
 Tags: maintenance mode, countdown, coming soon, under construction, easy
 Requires at least: 5.0

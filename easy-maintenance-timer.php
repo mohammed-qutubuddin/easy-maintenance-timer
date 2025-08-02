@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Easy Maintenance Mode with Countdown
+Plugin Name: Easy Maintenance Timer
 Description: Enable maintenance mode with countdown, custom logo and message.
 Version: 1.0
 Author: Abdul Nasir
