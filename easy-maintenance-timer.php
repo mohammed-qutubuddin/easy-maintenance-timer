@@ -1,27 +1,16 @@
 <?php
 /*
 Plugin Name: Easy Maintenance Timer
-Plugin URI: https://example.com/easy-maintenance-timer
 Description: Enable maintenance mode with countdown, custom logo, and message.
 Version: 1.0
 Author: Abdul Nasir
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: easy-maintenance-timer
-Domain Path: /languages
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; 
 }
-
-/**
- * Load plugin textdomain for translations.
- */
-function emmwt_load_textdomain() {
-    load_plugin_textdomain( 'easy-maintenance-timer', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-add_action( 'plugins_loaded', 'emmwt_load_textdomain' );
 
 /**
  * Include required files.
