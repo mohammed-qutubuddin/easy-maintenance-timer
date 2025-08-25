@@ -1,16 +1,24 @@
 === Easy Maintenance Timer ===
-Contributors: Mohammed Qutubuddin Nasir
+Contributors: abdulnasir1995
 Tags: maintenance mode, countdown, coming soon, under construction, easy
 Requires at least: 5.0
 Tested up to: 6.8
+Requires PHP: 7.2
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Easily enable maintenance mode on your site with a customizable countdown timer, logo and message.
+Enable maintenance mode with a customizable countdown, logo, and message—simple on/off control.
 
 == Description ==
-A super simple WordPress plugin puts your website into maintenance or under construction mode - along with displaying a countdown timer. It's possible to set your maintenance message, logo and end date/time from the plugin's settings page. No bloat, no confusion - Surf One Click Me On/Off!
+A super‑simple plugin to put the site into maintenance/under‑construction mode with a countdown timer. Configure the maintenance message, logo, and end date/time from the settings page. One‑click toggle, no bloat.
+
+Features:
+One‑click maintenance toggle.
+Countdown timer with end date/time.
+Custom logo and message.
+Logged‑in users bypass.
+Lightweight, no bloat.
 
 == Installation ==
 1. Download the zip file of the plugin.
@@ -32,9 +40,9 @@ Yes, you can upload/select any message and your image URL from the settings page
 When the timer expires, maintenance mode does not auto-off, but the message “Maintenance Complete!” is displayed.
 
 == Screenshots ==
-1. Plugins Settings Page Dashboard.
-2. Maintenance mode frontend (with counters).
-3. Logo & message customization options.
+1. Settings page (toggle, message, logo, date/time).
+2. Frontend maintenance page with countdown.
+3. Logo and message customization.
 
 == Changelog ==
 = 1.0 =
