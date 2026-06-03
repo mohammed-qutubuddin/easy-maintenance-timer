@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 function emmwt_init_plugin() {
     require_once plugin_dir_path( __FILE__ ) . 'includes/admin-settings.php';
     require_once plugin_dir_path( __FILE__ ) . 'includes/frontend-maintenance.php';
+    require_once plugin_dir_path( __FILE__ ) . 'includes/deactivation-feedback.php';
 }
 add_action( 'init', 'emmwt_init_plugin' );
 

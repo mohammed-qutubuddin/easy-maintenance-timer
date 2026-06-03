@@ -50,6 +50,7 @@ When the timer expires, maintenance mode does not auto-off, but the message “M
 * Fixed: Default logo and animation added #1
 * Wordpress: Tested with Wordpress version 7.0 #2
 * PHP: Tested with PHP version 8.4 #2
+* Feature: Feedback form added #3
 
 = 1.0 =
 * Initial release: Maintenance ON/OFF toggle, custom message, logo, date/time picker, and countdown.
