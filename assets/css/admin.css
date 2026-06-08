@@ -1,0 +1,198 @@
+#emmwt-deactivate-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+}
+
+#emmwt-deactivate-modal {
+    background: #fff;
+    padding: 30px;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+#emmwt-deactivate-modal h3 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.emmwt-reason-option {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.emmwt-reason-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* New Textarea Styles */
+#emmwt-tech-details-wrapper {
+    margin: 5px 0 15px 25px;
+}
+
+#emmwt-tech-desc {
+    width: 100%;
+    max-width: 95%;
+    border-radius: 4px;
+    border: 1px solid #ccd0d4;
+    padding: 8px;
+    font-family: inherit;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+}
+
+.emmwt-modal-footer {
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.emmwt-btn-submit {
+    background: #3b5998; 
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.emmwt-btn-submit:hover {
+    background: #2d4373;
+    color: #fff;
+}
+
+.emmwt-btn-skip {
+    background: transparent;
+    color: #3b5998;
+    border: 1px solid #3b5998;
+    padding: 9px 19px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.emmwt-btn-skip:hover {
+    background: #f0f4f8;
+    color: #3b5998;
+}
+
+.emmwt-btn-cancel {
+    margin-left: auto;
+    color: #3b5998;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Modern Plugin UI Styles */
+.emmwt-wrap {
+    max-width: 800px;
+    margin-top: 20px;
+}
+.emmwt-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    padding: 30px;
+    margin-top: 15px;
+}
+.emmwt-card h2 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f1;
+    margin-bottom: 25px;
+}
+/* CSS Toggle Switch */
+.emmwt-toggle {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+    vertical-align: middle;
+}
+.emmwt-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.emmwt-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+.emmwt-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .emmwt-slider {
+    background-color: #2271b1; /* WP Blue */
+}
+input:checked + .emmwt-slider:before {
+    transform: translateX(22px);
+}
+.emmwt-toggle-label {
+    margin-left: 10px;
+    vertical-align: middle;
+    font-weight: 600;
+}
+/* Improve input spacing */
+.emmwt-card .form-table th {
+    width: 250px;
+    font-weight: 600;
+}
+.emmwt-card input.regular-text,
+.emmwt-card input[type="text"], 
+.emmwt-card input[type="email"],
+.emmwt-card input[type="url"],
+.emmwt-card input[type="datetime-local"] {
+    width: 100%;
+    max-width: 400px;
+}
+.emmwt-logo-preview {
+    margin-top: 10px;
+    max-width: 120px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    display: block;
+}
+
+/* Fix Flatpickr UI clashing with WordPress Admin CSS */
+.flatpickr-calendar .flatpickr-current-month {
+    padding-top: 5px !important;
+}
+.flatpickr-calendar .flatpickr-current-month select.flatpickr-monthDropdown-months,
+.flatpickr-calendar .flatpickr-current-month input.cur-year {
+    font-size: 15px !important;
+    padding: 0 !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    line-height: inherit !important;
+    background: transparent !important;
+}
+.flatpickr-calendar .flatpickr-current-month .numInputWrapper {
+    width: 6ch !important;
+}
