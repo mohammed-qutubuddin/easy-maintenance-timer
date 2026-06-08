@@ -36,8 +36,17 @@ function emmwt_register_settings() {
     register_setting( 'emmwt_settings_group', 'emmwt_social_li', [ 'sanitize_callback' => 'esc_url_raw' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_social_ig', [ 'sanitize_callback' => 'esc_url_raw' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_delete_on_uninstall', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_bypass_ips', [ 'sanitize_callback' => 'emmwt_sanitize_ips' ] );
 }
 add_action( 'admin_init', 'emmwt_register_settings' );
+
+function emmwt_sanitize_ips( $value ) {
+    $ips = explode( "\n", str_replace( "\r", "", $value ) );
+    $clean_ips = array_filter( array_map( 'trim', $ips ), function( $ip ) {
+        return filter_var( $ip, FILTER_VALIDATE_IP );
+    } );
+    return implode( "\n", array_unique( $clean_ips ) );
+}
 
 function emmwt_sanitize_checkbox( $value ) {
     return ( $value === '1' ) ? '1' : '0';
@@ -65,6 +74,9 @@ add_action( 'update_option_emmwt_enabled', 'emmwt_flush_caches_on_toggle', 10, 3
  */
 function emmwt_settings_page_callback() {
     $default_date = gmdate( 'Y-m-d H:i', strtotime( '+1 day' ) );
+
+    $saved_ips  = (string) get_option( 'emmwt_bypass_ips', '' );
+    $current_ip = function_exists( 'emmwt_get_visitor_ip' ) ? emmwt_get_visitor_ip() : '';
     
     // Values
     $value_msg   = (string) get_option( 'emmwt_maint_message', 'Site Under Maintenance. Please check back soon.' );
@@ -171,6 +183,22 @@ function emmwt_settings_page_callback() {
                                 echo '</label>';
                             }
                             ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <?php esc_html_e( 'IP Whitelist', 'easy-maintenance-timer' ); ?><br>
+                            <small style="font-weight:normal; color:#666;"><?php esc_html_e( 'Enter one IP address per line.', 'easy-maintenance-timer' ); ?></small>
+                        </th>
+                        <td>
+                            <textarea name="emmwt_bypass_ips" class="emmwt-dependent large-text" rows="4" placeholder="e.g. 192.168.1.1"><?php echo esc_textarea( $saved_ips ); ?></textarea>
+                            <?php if ( $current_ip ) : ?>
+                                <p class="description">
+                                    <?php esc_html_e( 'Your current IP address is:', 'easy-maintenance-timer' ); ?> 
+                                    <strong id="emmwt-current-ip"><?php echo esc_html( $current_ip ); ?></strong>
+                                    <button type="button" class="button button-small" id="emmwt-add-my-ip" style="margin-left: 10px;"><?php esc_html_e( 'Add My IP', 'easy-maintenance-timer' ); ?></button>
+                                </p>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 </table>

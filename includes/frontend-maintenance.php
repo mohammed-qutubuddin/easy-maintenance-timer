@@ -1,6 +1,18 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; 
 
+// PCP: Securely fetch real IP by checking common proxy headers and sanitizing server variables.
+function emmwt_get_visitor_ip() {
+    if ( ! empty( $_SERVER['HTTP_CF_CONNECTING_IP'] ) ) {
+        return sanitize_text_field( wp_unslash( $_SERVER['HTTP_CF_CONNECTING_IP'] ) );
+    }
+    if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+        $ips = explode( ',', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) );
+        return trim( $ips[0] );
+    }
+    return isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+}
+
 function emmwt_check_bypass_access() {
     // 1. Admin always bypasses
     if ( current_user_can( 'manage_options' ) ) return true;
@@ -14,14 +26,24 @@ function emmwt_check_bypass_access() {
         $user = wp_get_current_user();
         $user_roles = (array) $user->roles;
         
-        // If there's a match between user's roles and allowed roles
         if ( ! empty( array_intersect( $allowed_roles, $user_roles ) ) ) {
             return true;
         }
     }
+
+    // 4. IP Whitelist Bypass
+    $allowed_ips_string = (string) get_option( 'emmwt_bypass_ips', '' );
+    if ( ! empty( $allowed_ips_string ) ) {
+        $allowed_ips = array_filter( array_map( 'trim', explode( "\n", $allowed_ips_string ) ) );
+        $visitor_ip  = emmwt_get_visitor_ip();
+        
+        if ( in_array( $visitor_ip, $allowed_ips, true ) ) {
+            return true;
+        }
+    }
+
     return false;
 }
-
 function emmwt_enqueue_frontend_assets() {
     if ( ! get_option( 'emmwt_enabled', 0 ) || emmwt_check_bypass_access() ) return;
 

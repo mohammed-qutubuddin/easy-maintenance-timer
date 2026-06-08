@@ -153,4 +153,20 @@ jQuery(document).ready(function ($) {
             });
         });
     }
+
+    // --- Add Current IP to Whitelist ---
+    $('#emmwt-add-my-ip').on('click', function(e) {
+        e.preventDefault();
+        var currentIp = $('#emmwt-current-ip').text().trim();
+        var $ipBox = $('textarea[name="emmwt_bypass_ips"]');
+        var existingIps = $ipBox.val().trim();
+        
+        // Convert to array to prevent duplicate exact matches
+        var ipArray = existingIps ? existingIps.split(/\r?\n/) : [];
+        if ($.inArray(currentIp, ipArray) === -1) {
+            $ipBox.val(existingIps === '' ? currentIp : existingIps + '\n' + currentIp);
+            // Optional visual feedback
+            $(this).text('Added!').prop('disabled', true);
+        }
+    });
 });
