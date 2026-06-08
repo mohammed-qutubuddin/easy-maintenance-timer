@@ -1,3 +1,5 @@
+'use strict';
+
 document.addEventListener("DOMContentLoaded", function () {
     if (typeof emmwt_data === "undefined" || !emmwt_data.date) {
         return; // no countdown data
@@ -22,6 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
         var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Pad single digits with leading zeros for a cleaner UI
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
 
         countdownEl.textContent = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
     }, 1000);
