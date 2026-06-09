@@ -44,6 +44,35 @@ function emmwt_check_bypass_access() {
 
     return false;
 }
+
+/**
+ * REST API Protection
+ * PCP Standard: Uses 'rest_authentication_errors' to block unauthorized access 
+ * and returns a proper WP_Error with a 503 status.
+ */
+function emmwt_disable_rest_api( $result ) {
+    // If a previous authentication check already returned an error, don't override it.
+    if ( ! empty( $result ) ) {
+        return $result;
+    }
+
+    // Check if both Maintenance Mode AND REST API Protection are enabled
+    if ( get_option( 'emmwt_enabled', 0 ) && get_option( 'emmwt_block_rest_api', 0 ) ) {
+        
+        // Allow access if the user meets any bypass condition (Admin, Role, IP, or Cookie)
+        if ( ! emmwt_check_bypass_access() ) {
+            return new WP_Error(
+                'rest_forbidden',
+                __( 'Site is currently under maintenance.', 'easy-maintenance-timer' ),
+                array( 'status' => 503 )
+            );
+        }
+    }
+
+    return $result;
+}
+add_filter( 'rest_authentication_errors', 'emmwt_disable_rest_api' );
+
 function emmwt_enqueue_frontend_assets() {
     if ( ! get_option( 'emmwt_enabled', 0 ) || emmwt_check_bypass_access() ) return;
 

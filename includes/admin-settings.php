@@ -24,10 +24,10 @@ function emmwt_register_settings() {
     register_setting( 'emmwt_settings_group', 'emmwt_bg_url', [ 'sanitize_callback' => 'esc_url_raw' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_enabled', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
     
-    // New Feature: Bypass Roles
+    // Bypass Roles
     register_setting( 'emmwt_settings_group', 'emmwt_bypass_roles', [ 'sanitize_callback' => 'emmwt_sanitize_array' ] );
 
-    // New Feature: Social & Contact
+    // Social & Contact
     register_setting( 'emmwt_settings_group', 'emmwt_enable_social', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_social_email', [ 'sanitize_callback' => 'sanitize_email' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_social_fb', [ 'sanitize_callback' => 'esc_url_raw' ] );
@@ -37,6 +37,9 @@ function emmwt_register_settings() {
     register_setting( 'emmwt_settings_group', 'emmwt_social_ig', [ 'sanitize_callback' => 'esc_url_raw' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_delete_on_uninstall', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_bypass_ips', [ 'sanitize_callback' => 'emmwt_sanitize_ips' ] );
+
+    // REST API Protection
+    register_setting( 'emmwt_settings_group', 'emmwt_block_rest_api', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
 }
 add_action( 'admin_init', 'emmwt_register_settings' );
 
@@ -199,6 +202,16 @@ function emmwt_settings_page_callback() {
                                     <button type="button" class="button button-small" id="emmwt-add-my-ip" style="margin-left: 10px;"><?php esc_html_e( 'Add My IP', 'easy-maintenance-timer' ); ?></button>
                                 </p>
                             <?php endif; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Block REST API', 'easy-maintenance-timer' ); ?></th>
+                        <td>
+                            <label class="emmwt-toggle" for="emmwt_block_rest_api">
+                                <input type="checkbox" id="emmwt_block_rest_api" name="emmwt_block_rest_api" value="1" <?php checked( 1, get_option( 'emmwt_block_rest_api', 0 ) ); ?> />
+                                <span class="emmwt-slider"></span>
+                            </label>
+                            <p class="description"><?php esc_html_e( 'Blocks unauthorized data scraping via WordPress REST API during downtime.', 'easy-maintenance-timer' ); ?></p>
                         </td>
                     </tr>
                 </table>
