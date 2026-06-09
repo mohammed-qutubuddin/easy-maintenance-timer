@@ -285,6 +285,29 @@ function emmwt_settings_page_callback() {
                 </table>
             </div>
 
+            <div class="emmwt-card" style="border-left: 4px solid #2271b1; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="margin-top: 0; font-size: 1.1em;"><?php esc_html_e( 'Need Help or Want to Contribute?', 'easy-maintenance-timer' ); ?></h3>
+                    <p style="margin: 5px 0 0; color: #50575e;">
+                        <?php esc_html_e( 'If you encounter any issues, have a feature request, or want to review the code, check out our repository or reach out directly!', 'easy-maintenance-timer' ); ?>
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <a href="<?php echo esc_url( 'https://github.com/abdulnasir1995/easy-maintenance-timer' ); ?>" target="_blank" rel="noopener noreferrer" class="button button-secondary">
+                        <span class="dashicons dashicons-editor-code" style="vertical-align: middle; margin-top: -17px;"></span> 
+                        <span style="vertical-align: middle;"><?php esc_html_e( 'GitHub Repository', 'easy-maintenance-timer' ); ?></span>
+                    </a>
+                    
+                    <a href="<?php echo esc_url( 'mailto:muhammed.qutubuddin786+plugin@gmail.com' ); ?>" class="button button-primary">
+                        <span class="dashicons dashicons-email-alt" style="vertical-align: middle; margin-top: -17px;"></span> 
+                        <span style="vertical-align: middle;"><?php esc_html_e( 'Contact Support', 'easy-maintenance-timer' ); ?></span>
+                    </a>
+                </div>
+                
+            </div>
+
             <p class="submit">
                 <?php submit_button( '', 'primary', 'submit', false ); ?>
             </p>
