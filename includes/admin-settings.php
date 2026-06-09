@@ -43,6 +43,18 @@ function emmwt_register_settings() {
 
     // Custom CSS
     register_setting( 'emmwt_settings_group', 'emmwt_custom_css', [ 'sanitize_callback' => 'wp_strip_all_tags' ] );
+
+    // NEW: Description & Typography Fields (PCP Sanitized)
+    register_setting( 'emmwt_settings_group', 'emmwt_maint_description', [ 'sanitize_callback' => 'sanitize_textarea_field' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_msg_color', [ 'sanitize_callback' => 'sanitize_hex_color' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_desc_color', [ 'sanitize_callback' => 'sanitize_hex_color' ] );
+
+    // NEW: Font Family Selector
+    register_setting( 'emmwt_settings_group', 'emmwt_font_family', [ 'sanitize_callback' => 'sanitize_text_field' ] );
+
+    // NEW: SEO Meta Data (PCP Sanitized)
+    register_setting( 'emmwt_settings_group', 'emmwt_seo_title', [ 'sanitize_callback' => 'sanitize_text_field' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_seo_meta_desc', [ 'sanitize_callback' => 'sanitize_textarea_field' ] );
 }
 add_action( 'admin_init', 'emmwt_register_settings' );
 
@@ -90,8 +102,15 @@ function emmwt_settings_page_callback() {
     $value_bg    = (string) get_option( 'emmwt_bg_url', '' ); 
     $value_date  = (string) get_option( 'emmwt_countdown_date', $default_date );
     $saved_roles = (array) get_option( 'emmwt_bypass_roles', ['editor'] );
+    $value_desc = (string) get_option( 'emmwt_maint_description', '' );
+    $msg_color  = (string) get_option( 'emmwt_msg_color', '#000000' );
+    $desc_color = (string) get_option( 'emmwt_desc_color', '#50575e' );
+    $font_family = (string) get_option( 'emmwt_font_family', 'system' );
 
     $bypass_url  = add_query_arg( 'emmwt_bypass', 'true', site_url() );
+
+    $seo_title = (string) get_option( 'emmwt_seo_title', '' );
+    $seo_desc  = (string) get_option( 'emmwt_seo_meta_desc', '' );
     
     // Get all WP roles for the checkboxes
     global $wp_roles;
@@ -136,7 +155,48 @@ function emmwt_settings_page_callback() {
                         </tr>
                         <tr>
                             <th scope="row"><?php esc_html_e( 'Maintenance Message', 'easy-maintenance-timer' ); ?></th>
-                            <td><input type="text" name="emmwt_maint_message" class="emmwt-dependent regular-text" value="<?php echo esc_attr( $value_msg ); ?>" /></td>
+                            <td>
+                                <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+                                    <input type="text" name="emmwt_maint_message" class="emmwt-dependent regular-text" value="<?php echo esc_attr( $value_msg ); ?>" />
+                                    <input type="text" name="emmwt_msg_color" class="emmwt-color-picker emmwt-dependent" value="<?php echo esc_attr( $msg_color ); ?>" data-default-color="#000000" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Description', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <div style="display:flex; gap:15px; align-items:flex-start; flex-wrap:wrap;">
+                                    <textarea name="emmwt_maint_description" class="emmwt-dependent large-text" rows="3" placeholder="<?php esc_attr_e( 'Enter a brief description... e.g. We are upgrading our systems.', 'easy-maintenance-timer' ); ?>"><?php echo esc_textarea( $value_desc ); ?></textarea>
+                                    <div style="margin-top: 2px;">
+                                        <input type="text" name="emmwt_desc_color" class="emmwt-color-picker emmwt-dependent" value="<?php echo esc_attr( $desc_color ); ?>" data-default-color="#50575e" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>   
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Typography Style', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <select name="emmwt_font_family" class="emmwt-dependent regular-text">
+                                    <option value="system" <?php selected( $font_family, 'system' ); ?>><?php esc_html_e( 'System Default (Fastest)', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="sans-serif" <?php selected( $font_family, 'sans-serif' ); ?>><?php esc_html_e( 'Modern Sans-Serif', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="serif" <?php selected( $font_family, 'serif' ); ?>><?php esc_html_e( 'Classic Serif', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="monospace" <?php selected( $font_family, 'monospace' ); ?>><?php esc_html_e( 'Monospace / Code', 'easy-maintenance-timer' ); ?></option>
+                                </select>
+                                <p class="description"><?php esc_html_e( 'Native OS fonts that load instantly without external requests (Zero Bloat).', 'easy-maintenance-timer' ); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'SEO Page Title', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <input type="text" name="emmwt_seo_title" class="emmwt-dependent regular-text" value="<?php echo esc_attr( $seo_title ); ?>" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) . ' - ' . __( 'Maintenance', 'easy-maintenance-timer' ) ); ?>" />
+                                <p class="description"><?php esc_html_e( 'Custom <title> tag for search engines. Leave blank to use default site name.', 'easy-maintenance-timer' ); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'SEO Meta Description', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <textarea name="emmwt_seo_meta_desc" class="emmwt-dependent large-text" rows="2" placeholder="<?php esc_attr_e( 'Brief description for search engine results to maintain SEO during downtime...', 'easy-maintenance-timer' ); ?>"><?php echo esc_textarea( $seo_desc ); ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <th scope="row"><?php esc_html_e( 'Logo URL', 'easy-maintenance-timer' ); ?></th>
@@ -377,6 +437,16 @@ function emmwt_admin_settings_enqueue( $hook ) {
     if ( 'settings_page_emmwt_settings' !== $hook ) return;
 
     wp_enqueue_media();
+
+    // NEW: Load Native WP Color Picker
+    wp_enqueue_style( 'wp-color-picker' );
+    
+    wp_enqueue_style( 'flatpickr-css', EMMWT_PLUGIN_URL . 'assets/css/flatpickr.min.css', array(), '4.6.13' );
+    wp_enqueue_script( 'flatpickr-js', EMMWT_PLUGIN_URL . 'assets/js/flatpickr.min.js', array('jquery'), '4.6.13', true );
+    wp_enqueue_style( 'emmwt-admin-css', EMMWT_PLUGIN_URL . 'assets/css/admin.css', array(), EMMWT_VERSION );
+    
+    // NEW: Add 'wp-color-picker' as a dependency for our admin.js
+    wp_enqueue_script( 'emmwt-admin-settings-js', EMMWT_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'flatpickr-js', 'wp-color-picker' ), EMMWT_VERSION, true );
     
     // PCP FIX: External CDN scripts are not allowed. Download these and place them in assets/css and assets/js
     wp_enqueue_style( 'flatpickr-css', EMMWT_PLUGIN_URL . 'assets/css/flatpickr.min.css', array(), '4.6.13' );

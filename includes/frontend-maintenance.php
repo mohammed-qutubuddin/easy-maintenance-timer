@@ -140,12 +140,50 @@ function emmwt_frontend_maintenance_redirect() {
         $seconds_remaining = $expiry_timestamp - $current_timestamp;
     }
 
+    // 1. Tell caching plugins (WP Rocket, W3TC, LiteSpeed) not to cache this page
+    if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+        define( 'DONOTCACHEPAGE', true );
+    }
+    // 2. Tell Object Caches (Redis, Memcached) to bypass
+    if ( ! defined( 'DONOTCACHEOBJECT' ) ) {
+        define( 'DONOTCACHEOBJECT', true );
+    }
+    // 3. Prevent auto-minification conflicts on this specific drop-in page
+    if ( ! defined( 'DONOTMINIFY' ) ) {
+        define( 'DONOTMINIFY', true );
+    }
+
     nocache_headers(); 
     status_header( 503 );
     header( 'Retry-After: ' . max( 60, $seconds_remaining ) ); 
+    
+    // Fetch values
+    $msg        = (string) get_option( 'emmwt_maint_message', 'Site Under Maintenance. Please check back soon.' );
+    $desc       = (string) get_option( 'emmwt_maint_description', '' );
+    $msg_color  = (string) get_option( 'emmwt_msg_color', '#000000' );
+    $desc_color = (string) get_option( 'emmwt_desc_color', '#50575e' );
+    $logo       = (string) get_option( 'emmwt_logo_url', '' );
 
-    $msg  = (string) get_option( 'emmwt_maint_message', 'Site Under Maintenance. Please check back soon.' );
-    $logo = (string) get_option( 'emmwt_logo_url', '' );
+    // 1. Fetch SEO Data
+    $seo_title = (string) get_option( 'emmwt_seo_title', '' );
+    $seo_desc  = (string) get_option( 'emmwt_seo_meta_desc', '' );
+    
+    // 2. Set Fallback Title if empty
+    $page_title = ! empty( $seo_title ) ? $seo_title : get_bloginfo( 'name' ) . ' - ' . __( 'Maintenance', 'easy-maintenance-timer' );
+
+    // 1. Fetch Font Setting
+    $font_setting = get_option( 'emmwt_font_family', 'system' );
+    
+    // 2. Define Zero-Bloat Font Stacks
+    $font_css = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'; // Default System
+    
+    if ( $font_setting === 'sans-serif' ) {
+        $font_css = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+    } elseif ( $font_setting === 'serif' ) {
+        $font_css = 'Georgia, "Times New Roman", Times, serif';
+    } elseif ( $font_setting === 'monospace' ) {
+        $font_css = 'Menlo, Monaco, Consolas, "Courier New", monospace';
+    }
 
     ?>
     <!DOCTYPE html>
@@ -153,7 +191,15 @@ function emmwt_frontend_maintenance_redirect() {
     <head>
         <meta charset="<?php bloginfo( 'charset' ); ?>">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><?php bloginfo( 'name' ); ?> - <?php esc_html_e( 'Maintenance', 'easy-maintenance-timer' ); ?></title>
+        
+        <!-- NEW: Dynamic SEO Title -->
+        <title><?php echo esc_html( $page_title ); ?></title>
+        
+        <!-- NEW: SEO Meta Description -->
+        <?php if ( ! empty( $seo_desc ) ) : ?>
+            <meta name="description" content="<?php echo esc_attr( $seo_desc ); ?>">
+        <?php endif; ?>
+
         <?php wp_head(); ?>
     </head>
     <body <?php body_class( 'emmwt-maintenance-mode' ); ?>>
@@ -169,7 +215,14 @@ function emmwt_frontend_maintenance_redirect() {
                 </svg>
             <?php endif; ?>
 
-            <h1><?php echo esc_html( $msg ); ?></h1>
+            <h1 style="color: <?php echo esc_attr( $msg_color ); ?>;"><?php echo esc_html( $msg ); ?></h1>
+            
+            <?php if ( $desc ) : ?>
+                <p style="color: <?php echo esc_attr( $desc_color ); ?>; font-size: 1.15em; margin-top: 10px; margin-bottom: 25px; line-height: 1.6;">
+                    <?php echo nl2br( esc_html( $desc ) ); ?>
+                </p>
+            <?php endif; ?>
+
             <div id="emmwt_countdown"></div>
 
             <?php if ( get_option( 'emmwt_enable_social', 0 ) ) : ?>

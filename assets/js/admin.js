@@ -1,6 +1,11 @@
 jQuery(document).ready(function ($) {
     'use strict';
 
+    // --- Initialize WP Native Color Picker ---
+    if ($('.emmwt-color-picker').length) {
+        $('.emmwt-color-picker').wpColorPicker();
+    }
+
     // --- Initialize Flatpickr Custom Datepicker ---
     if ($('#emmwt_datepicker').length) {
         flatpickr('#emmwt_datepicker', {
