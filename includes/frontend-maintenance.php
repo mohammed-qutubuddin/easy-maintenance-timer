@@ -14,6 +14,13 @@ function emmwt_get_visitor_ip() {
 }
 
 function emmwt_check_bypass_access() {
+    
+    // NEW FIX: Force Maintenance Mode for Live Preview so CSS and JS load properly
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ( isset( $_GET['emmwt_preview'] ) && $_GET['emmwt_preview'] === 'true' && current_user_can( 'manage_options' ) ) {
+        return false; // Tells the system to treat Admin like a normal visitor for preview
+    }
+
     // 1. Admin always bypasses
     if ( current_user_can( 'manage_options' ) ) return true;
     
@@ -35,7 +42,7 @@ function emmwt_check_bypass_access() {
     $allowed_ips_string = (string) get_option( 'emmwt_bypass_ips', '' );
     if ( ! empty( $allowed_ips_string ) ) {
         $allowed_ips = array_filter( array_map( 'trim', explode( "\n", $allowed_ips_string ) ) );
-        $visitor_ip  = emmwt_get_visitor_ip();
+        $visitor_ip  = function_exists('emmwt_get_visitor_ip') ? emmwt_get_visitor_ip() : '';
         
         if ( in_array( $visitor_ip, $allowed_ips, true ) ) {
             return true;
@@ -114,9 +121,30 @@ function emmwt_enqueue_frontend_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'emmwt_enqueue_frontend_assets' );
 
-function emmwt_frontend_maintenance_redirect() {
+/**
+ * Output Custom Tracking Scripts in the frontend <head>
+ * PCP Note: Output is intentionally unescaped here because it contains raw <script> tags,
+ * but it was securely sanitized on save requiring 'unfiltered_html' capability.
+ */
+function emmwt_output_custom_scripts() {
     if ( ! get_option( 'emmwt_enabled', 0 ) ) return;
 
+    $scripts = get_option( 'emmwt_custom_scripts', '' );
+    
+    if ( ! empty( $scripts ) ) {
+        echo "\n<!-- Easy Maintenance Timer: Custom Scripts -->\n";
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo $scripts . "\n";
+    }
+}
+add_action( 'wp_head', 'emmwt_output_custom_scripts', 99 );
+
+function emmwt_frontend_maintenance_redirect() {
+    
+    // Check if maintenance is disabled
+    if ( ! get_option( 'emmwt_enabled', 0 ) ) return;
+
+    // Secret Client Bypass Link Logic
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     if ( isset( $_GET['emmwt_bypass'] ) && $_GET['emmwt_bypass'] === 'true' ) {
         setcookie( 'emmwt_bypass_token', '1', time() + ( 86400 * 7 ), COOKIEPATH, COOKIE_DOMAIN );
@@ -124,8 +152,20 @@ function emmwt_frontend_maintenance_redirect() {
         exit;
     }
 
+    // Check if user is allowed to bypass
+    // Preview mode now automatically skips this because of the fix in emmwt_check_bypass_access()
     if ( emmwt_check_bypass_access() ) return;
 
+    // --- If we reach here, we MUST show the maintenance page ---
+
+    // STRICT FIX for Preview Mode: Strip Admin Bar & Margins
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ( isset( $_GET['emmwt_preview'] ) && $_GET['emmwt_preview'] === 'true' && current_user_can( 'manage_options' ) ) {
+        add_filter( 'show_admin_bar', '__return_false', 99 );
+        remove_action( 'wp_head', '_admin_bar_bump_cb' );
+    }
+
+    // Timer & Expiry Logic
     $date = (string) get_option( 'emmwt_countdown_date', '' );
     $seconds_remaining = 3600; 
     
@@ -133,50 +173,49 @@ function emmwt_frontend_maintenance_redirect() {
         $expiry_timestamp  = strtotime( $date );
         $current_timestamp = current_time( 'timestamp' );
         
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $is_preview = isset( $_GET['emmwt_preview'] ) && $_GET['emmwt_preview'] === 'true';
+        
         if ( $expiry_timestamp && $current_timestamp >= $expiry_timestamp ) {
             update_option( 'emmwt_enabled', 0 ); 
-            return; 
+            if ( ! $is_preview ) return; // Let admin see preview even if expired
+        } else {
+            $seconds_remaining = $expiry_timestamp - $current_timestamp;
         }
-        $seconds_remaining = $expiry_timestamp - $current_timestamp;
     }
 
-    // 1. Tell caching plugins (WP Rocket, W3TC, LiteSpeed) not to cache this page
-    if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-        define( 'DONOTCACHEPAGE', true );
-    }
-    // 2. Tell Object Caches (Redis, Memcached) to bypass
-    if ( ! defined( 'DONOTCACHEOBJECT' ) ) {
-        define( 'DONOTCACHEOBJECT', true );
-    }
-    // 3. Prevent auto-minification conflicts on this specific drop-in page
-    if ( ! defined( 'DONOTMINIFY' ) ) {
-        define( 'DONOTMINIFY', true );
-    }
+    // Advanced Cache Prevention
+    if ( ! defined( 'DONOTCACHEPAGE' ) ) define( 'DONOTCACHEPAGE', true );
+    if ( ! defined( 'DONOTCACHEOBJECT' ) ) define( 'DONOTCACHEOBJECT', true );
+    if ( ! defined( 'DONOTMINIFY' ) ) define( 'DONOTMINIFY', true );
 
     nocache_headers(); 
-    status_header( 503 );
-    header( 'Retry-After: ' . max( 60, $seconds_remaining ) ); 
-    
-    // Fetch values
-    $msg        = (string) get_option( 'emmwt_maint_message', 'Site Under Maintenance. Please check back soon.' );
-    $desc       = (string) get_option( 'emmwt_maint_description', '' );
-    $msg_color  = (string) get_option( 'emmwt_msg_color', '#000000' );
-    $desc_color = (string) get_option( 'emmwt_desc_color', '#50575e' );
-    $logo       = (string) get_option( 'emmwt_logo_url', '' );
 
-    // 1. Fetch SEO Data
-    $seo_title = (string) get_option( 'emmwt_seo_title', '' );
-    $seo_desc  = (string) get_option( 'emmwt_seo_meta_desc', '' );
+    // Mode Type Headers
+    $status_type = get_option( 'emmwt_status_type', 'maintenance' );
+    if ( $status_type === 'coming_soon' ) {
+        status_header( 200 );
+    } else {
+        status_header( 503 );
+        header( 'Retry-After: ' . max( 60, $seconds_remaining ) ); 
+    }
     
-    // 2. Set Fallback Title if empty
+    // Fetch UI Values
+    $msg                = (string) get_option( 'emmwt_maint_message', 'Site Under Maintenance. Please check back soon.' );
+    $desc               = (string) get_option( 'emmwt_maint_description', '' );
+    $msg_color          = (string) get_option( 'emmwt_msg_color', '#000000' );
+    $desc_color         = (string) get_option( 'emmwt_desc_color', '#50575e' );
+    $logo               = (string) get_option( 'emmwt_logo_url', '' );
+    $bg_url             = (string) get_option( 'emmwt_bg_url', '' );
+    $bg_overlay_color   = (string) get_option( 'emmwt_bg_overlay_color', '#000000' );
+    $bg_overlay_opacity = (int) get_option( 'emmwt_bg_overlay_opacity', 50 );
+
+    $seo_title  = (string) get_option( 'emmwt_seo_title', '' );
+    $seo_desc   = (string) get_option( 'emmwt_seo_meta_desc', '' );
     $page_title = ! empty( $seo_title ) ? $seo_title : get_bloginfo( 'name' ) . ' - ' . __( 'Maintenance', 'easy-maintenance-timer' );
 
-    // 1. Fetch Font Setting
     $font_setting = get_option( 'emmwt_font_family', 'system' );
-    
-    // 2. Define Zero-Bloat Font Stacks
-    $font_css = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'; // Default System
-    
+    $font_css = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'; 
     if ( $font_setting === 'sans-serif' ) {
         $font_css = '"Helvetica Neue", Helvetica, Arial, sans-serif';
     } elseif ( $font_setting === 'serif' ) {
@@ -185,24 +224,36 @@ function emmwt_frontend_maintenance_redirect() {
         $font_css = 'Menlo, Monaco, Consolas, "Courier New", monospace';
     }
 
+    // Generate Body Style
+    $body_style = "font-family: " . esc_attr( $font_css ) . ";";
+    
+    if ( ! empty( $bg_url ) ) {
+        $hex = ltrim( $bg_overlay_color, '#' );
+        $r = hexdec( strlen( $hex ) == 3 ? str_repeat( substr( $hex, 0, 1 ), 2 ) : substr( $hex, 0, 2 ) );
+        $g = hexdec( strlen( $hex ) == 3 ? str_repeat( substr( $hex, 1, 1 ), 2 ) : substr( $hex, 2, 2 ) );
+        $b = hexdec( strlen( $hex ) == 3 ? str_repeat( substr( $hex, 2, 1 ), 2 ) : substr( $hex, 4, 2 ) );
+        $alpha = $bg_overlay_opacity / 100;
+        
+        $rgba = "rgba($r, $g, $b, $alpha)";
+        $body_style .= " background: linear-gradient($rgba, $rgba), url('" . esc_url( $bg_url ) . "') no-repeat center center fixed; background-size: cover;";
+    } else {
+        $body_style .= " background-color: " . esc_attr( $bg_overlay_color ) . ";";
+    }
+
+    // Output HTML
     ?>
     <!DOCTYPE html>
     <html <?php language_attributes(); ?>>
     <head>
         <meta charset="<?php bloginfo( 'charset' ); ?>">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        <!-- NEW: Dynamic SEO Title -->
         <title><?php echo esc_html( $page_title ); ?></title>
-        
-        <!-- NEW: SEO Meta Description -->
         <?php if ( ! empty( $seo_desc ) ) : ?>
             <meta name="description" content="<?php echo esc_attr( $seo_desc ); ?>">
         <?php endif; ?>
-
         <?php wp_head(); ?>
     </head>
-    <body <?php body_class( 'emmwt-maintenance-mode' ); ?>>
+    <body class="emmwt-maintenance-mode" style="<?php echo esc_attr( $body_style ); ?>">
         <?php wp_body_open(); ?>
         
         <div class="emmwt-content-wrapper">
@@ -242,7 +293,6 @@ function emmwt_frontend_maintenance_redirect() {
                             $link = $key === 'email' || $key === 'wa' ? $data['prefix'] . $data['url'] : $data['url'];
                             echo '<a href="' . esc_url($link) . '" target="_blank" rel="noopener noreferrer" class="emmwt-social-icon">';
                             echo '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">';
-                            // PCP FIX: Output Escaped securely for inline SVG
                             echo wp_kses( $data['svg'], array( 'path' => array( 'd' => true ) ) );
                             echo '</svg></a>';
                         }

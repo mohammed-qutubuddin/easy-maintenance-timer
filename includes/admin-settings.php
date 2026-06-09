@@ -55,6 +55,16 @@ function emmwt_register_settings() {
     // NEW: SEO Meta Data (PCP Sanitized)
     register_setting( 'emmwt_settings_group', 'emmwt_seo_title', [ 'sanitize_callback' => 'sanitize_text_field' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_seo_meta_desc', [ 'sanitize_callback' => 'sanitize_textarea_field' ] );
+
+    // NEW: Mode Type (Maintenance vs Coming Soon)
+    register_setting( 'emmwt_settings_group', 'emmwt_status_type', [ 'sanitize_callback' => 'sanitize_text_field' ] );
+
+    // NEW: Custom Tracking Scripts
+    register_setting( 'emmwt_settings_group', 'emmwt_custom_scripts', [ 'sanitize_callback' => 'emmwt_sanitize_scripts' ] );
+
+    // NEW: Background Overlay Settings
+    register_setting( 'emmwt_settings_group', 'emmwt_bg_overlay_color', [ 'sanitize_callback' => 'sanitize_hex_color' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_bg_overlay_opacity', [ 'sanitize_callback' => 'absint' ] );
 }
 add_action( 'admin_init', 'emmwt_register_settings' );
 
@@ -64,6 +74,14 @@ function emmwt_sanitize_ips( $value ) {
         return filter_var( $ip, FILTER_VALIDATE_IP );
     } );
     return implode( "\n", array_unique( $clean_ips ) );
+}
+
+// Custom Sanitizer for Scripts (PCP Compliant)
+function emmwt_sanitize_scripts( $value ) {
+    if ( current_user_can( 'unfiltered_html' ) ) {
+        return $value; // Admins can save raw scripts
+    }
+    return wp_kses_post( $value ); // Fallback safety for non-admins
 }
 
 function emmwt_sanitize_checkbox( $value ) {
@@ -91,6 +109,9 @@ add_action( 'update_option_emmwt_enabled', 'emmwt_flush_caches_on_toggle', 10, 3
  * Render the plugin settings page.
  */
 function emmwt_settings_page_callback() {
+    $bg_overlay_color   = (string) get_option( 'emmwt_bg_overlay_color', '#000000' );
+    $bg_overlay_opacity = (int) get_option( 'emmwt_bg_overlay_opacity', 50 ); // Default 50% opacity
+
     $default_date = gmdate( 'Y-m-d H:i', strtotime( '+1 day' ) );
 
     $saved_ips  = (string) get_option( 'emmwt_bypass_ips', '' );
@@ -108,9 +129,12 @@ function emmwt_settings_page_callback() {
     $font_family = (string) get_option( 'emmwt_font_family', 'system' );
 
     $bypass_url  = add_query_arg( 'emmwt_bypass', 'true', site_url() );
+    $preview_url = add_query_arg( 'emmwt_preview', 'true', site_url() ); // NEW: Preview URL
 
     $seo_title = (string) get_option( 'emmwt_seo_title', '' );
     $seo_desc  = (string) get_option( 'emmwt_seo_meta_desc', '' );
+
+    $status_type = (string) get_option( 'emmwt_status_type', 'maintenance' );
     
     // Get all WP roles for the checkboxes
     global $wp_roles;
@@ -119,14 +143,24 @@ function emmwt_settings_page_callback() {
     ?>
     
     <div class="wrap emmwt-wrap">
-        <h2><?php esc_html_e( 'Easy Maintenance Mode Settings', 'easy-maintenance-timer' ); ?></h2>
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="margin: 0;"><?php esc_html_e( 'Easy Maintenance Mode Settings', 'easy-maintenance-timer' ); ?></h2>
+            
+            <a href="<?php echo esc_url( $preview_url ); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary" title="<?php esc_attr_e( 'Make sure to Save Changes before previewing!', 'easy-maintenance-timer' ); ?>">
+                <span class="dashicons dashicons-visibility" style="vertical-align: middle; margin-top: -17px;"></span> 
+                <span style="vertical-align: middle;"><?php esc_html_e( 'Live Preview', 'easy-maintenance-timer' ); ?></span>
+            </a>
+        </div>
+        
+        <h2 class="nav-tab-wrapper emmwt-nav-tabs" style="margin-bottom: 20px;">
         
         <!-- NEW: NATIVE WORDPRESS TABS NAVIGATION -->
         <h2 class="nav-tab-wrapper emmwt-nav-tabs" style="margin-bottom: 20px;">
             <a href="#tab-general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General Settings', 'easy-maintenance-timer' ); ?></a>
             <a href="#tab-access" class="nav-tab"><?php esc_html_e( 'Access Control', 'easy-maintenance-timer' ); ?></a>
             <a href="#tab-social" class="nav-tab"><?php esc_html_e( 'Social & Contact', 'easy-maintenance-timer' ); ?></a>
-            <a href="#tab-css" class="nav-tab"><?php esc_html_e( 'Custom CSS', 'easy-maintenance-timer' ); ?></a>
+            <a href="#tab-css" class="nav-tab"><?php esc_html_e( 'Custom CSS & Scripts', 'easy-maintenance-timer' ); ?></a>
             <a href="#tab-support" class="nav-tab"><?php esc_html_e( 'Support', 'easy-maintenance-timer' ); ?></a>
         </h2>
 
@@ -145,6 +179,18 @@ function emmwt_settings_page_callback() {
                                     <input type="checkbox" id="emmwt_enabled" name="emmwt_enabled" value="1" <?php checked( 1, get_option( 'emmwt_enabled', 0 ) ); ?> />
                                     <span class="emmwt-slider"></span>
                                 </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Mode Type', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <select name="emmwt_status_type" class="emmwt-dependent regular-text">
+                                    <option value="maintenance" <?php selected( $status_type, 'maintenance' ); ?>><?php esc_html_e( 'Maintenance Mode (503 Error - SEO Safe)', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="coming_soon" <?php selected( $status_type, 'coming_soon' ); ?>><?php esc_html_e( 'Coming Soon (200 OK - Indexable)', 'easy-maintenance-timer' ); ?></option>
+                                </select>
+                                <p class="description">
+                                    <?php esc_html_e( 'Use "Maintenance" for temporary downtime. Use "Coming Soon" if your site is brand new and you want Google to index it.', 'easy-maintenance-timer' ); ?>
+                                </p>
                             </td>
                         </tr>
                         <tr>                    
@@ -217,6 +263,23 @@ function emmwt_settings_page_callback() {
                                     <input type="text" class="emmwt-dependent regular-text" id="emmwt_bg_url" name="emmwt_bg_url" value="<?php echo esc_url( $value_bg ); ?>" />
                                     <button class="emmwt-dependent button" type="button" id="emmwt_bg_upload"><?php esc_html_e( 'Select', 'easy-maintenance-timer' ); ?></button>
                                 </div>
+                            </td>
+                        </tr>
+                        <!-- NEW: Background Overlay -->
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Background Overlay', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+                                    <!-- Overlay Color -->
+                                    <input type="text" name="emmwt_bg_overlay_color" class="emmwt-color-picker emmwt-dependent" value="<?php echo esc_attr( $bg_overlay_color ); ?>" data-default-color="#000000" />
+                                    
+                                    <!-- Overlay Opacity -->
+                                    <div style="display:flex; align-items:center; gap:5px;">
+                                        <label for="emmwt_bg_overlay_opacity"><?php esc_html_e( 'Opacity:', 'easy-maintenance-timer' ); ?></label>
+                                        <input type="number" id="emmwt_bg_overlay_opacity" name="emmwt_bg_overlay_opacity" class="small-text emmwt-dependent" min="0" max="100" value="<?php echo esc_attr( $bg_overlay_opacity ); ?>" /> %
+                                    </div>
+                                </div>
+                                <p class="description"><?php esc_html_e( 'Set an overlay color and opacity (0-100) to make text easier to read over images.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                         <tr>
@@ -348,10 +411,10 @@ function emmwt_settings_page_callback() {
                 </div>
             </div>
 
-            <!-- TAB 4: CUSTOM CSS -->
+            <!-- TAB 4: Custom CSS & Scripts -->
             <div id="tab-css" class="emmwt-tab-pane" style="display: none;">
                 <div class="emmwt-card">
-                    <h3><?php esc_html_e( '4. Custom CSS', 'easy-maintenance-timer' ); ?></h3>
+                    <h3><?php esc_html_e( '4. Custom CSS & Scripts', 'easy-maintenance-timer' ); ?></h3>
                     <p class="description" style="margin-bottom: 15px;">
                         <?php esc_html_e( 'Add your own custom CSS to override the default maintenance page styles. Do NOT include <style> tags.', 'easy-maintenance-timer' ); ?>
                     </p>
@@ -360,6 +423,14 @@ function emmwt_settings_page_callback() {
                             <th scope="row"><?php esc_html_e( 'Custom Styles', 'easy-maintenance-timer' ); ?></th>
                             <td>
                                 <textarea name="emmwt_custom_css" class="large-text" rows="6" placeholder="body.emmwt-maintenance-mode { background-color: #000; }&#10;.emmwt-content-wrapper { border-radius: 10px; }"><?php echo esc_textarea( get_option( 'emmwt_custom_css', '' ) ); ?></textarea>
+                            </td>
+                        </tr>
+                        <!-- NEW: Custom Tracking Scripts -->
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Custom Tracking Scripts', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <textarea name="emmwt_custom_scripts" class="large-text" rows="5" placeholder="<?php esc_attr_e( '<script>...your tracking code...</script>', 'easy-maintenance-timer' ); ?>"><?php echo esc_textarea( get_option( 'emmwt_custom_scripts', '' ) ); ?></textarea>
+                                <p class="description"><?php esc_html_e( 'Add your Google Analytics, Facebook Pixel, or any other tracking scripts here. You MUST include the <script> tags.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                     </table>
