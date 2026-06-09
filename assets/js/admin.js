@@ -169,4 +169,29 @@ jQuery(document).ready(function ($) {
             $(this).text('Added!').prop('disabled', true);
         }
     });
+
+    // --- Tabs Switcher Logic ---
+    $('.emmwt-nav-tabs .nav-tab').on('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active class from all tabs
+        $('.emmwt-nav-tabs .nav-tab').removeClass('nav-tab-active');
+        // Add active class to clicked tab
+        $(this).addClass('nav-tab-active');
+        
+        // Hide all panes
+        $('.emmwt-tab-pane').hide();
+        // Show target pane
+        var target = $(this).attr('href');
+        $(target).show();
+        
+        // Save the active tab in local storage to keep it active after form save
+        localStorage.setItem('emmwt_active_tab', target);
+    });
+    
+    // Persist tab on page load
+    var activeTab = localStorage.getItem('emmwt_active_tab');
+    if (activeTab && $(activeTab).length) {
+        $('.emmwt-nav-tabs .nav-tab[href="' + activeTab + '"]').click();
+    }
 });

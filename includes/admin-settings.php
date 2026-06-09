@@ -102,210 +102,234 @@ function emmwt_settings_page_callback() {
     <div class="wrap emmwt-wrap">
         <h2><?php esc_html_e( 'Easy Maintenance Mode Settings', 'easy-maintenance-timer' ); ?></h2>
         
+        <!-- NEW: NATIVE WORDPRESS TABS NAVIGATION -->
+        <h2 class="nav-tab-wrapper emmwt-nav-tabs" style="margin-bottom: 20px;">
+            <a href="#tab-general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General Settings', 'easy-maintenance-timer' ); ?></a>
+            <a href="#tab-access" class="nav-tab"><?php esc_html_e( 'Access Control', 'easy-maintenance-timer' ); ?></a>
+            <a href="#tab-social" class="nav-tab"><?php esc_html_e( 'Social & Contact', 'easy-maintenance-timer' ); ?></a>
+            <a href="#tab-css" class="nav-tab"><?php esc_html_e( 'Custom CSS', 'easy-maintenance-timer' ); ?></a>
+            <a href="#tab-support" class="nav-tab"><?php esc_html_e( 'Support', 'easy-maintenance-timer' ); ?></a>
+        </h2>
+
         <form method="post" action="options.php">
             <?php settings_fields( 'emmwt_settings_group' ); ?>
 
-            <div class="emmwt-card">
-                <h3><?php esc_html_e( '1. General Settings', 'easy-maintenance-timer' ); ?></h3>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Enable Maintenance Mode', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <label class="emmwt-toggle" for="emmwt_enabled">
-                                <input type="checkbox" id="emmwt_enabled" name="emmwt_enabled" value="1" <?php checked( 1, get_option( 'emmwt_enabled', 0 ) ); ?> />
-                                <span class="emmwt-slider"></span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>                    
-                        <th scope="row"><?php esc_html_e( 'Countdown End Date/Time', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <input type="text" id="emmwt_datepicker" name="emmwt_countdown_date" class="emmwt-dependent" value="<?php echo esc_attr( $value_date ); ?>" required />
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Maintenance Message', 'easy-maintenance-timer' ); ?></th>
-                        <td><input type="text" name="emmwt_maint_message" class="emmwt-dependent regular-text" value="<?php echo esc_attr( $value_msg ); ?>" /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Logo URL', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <div style="display:flex; gap:10px; align-items:flex-start;">
-                                <input type="text" class="emmwt-dependent regular-text" id="emmwt_logo_url" name="emmwt_logo_url" value="<?php echo esc_url( $value_logo ); ?>" placeholder="Leave blank for clean SVG icon" />
-                                <button class="emmwt-dependent button" type="button" id="emmwt_logo_upload"><?php esc_html_e( 'Select', 'easy-maintenance-timer' ); ?></button>
-                            </div>
-                            <?php if ( $value_logo ) : ?>
-                                <img src="<?php echo esc_url( $value_logo ); ?>" class="emmwt-logo-preview" alt="Logo" />
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Background Image', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <div style="display:flex; gap:10px; align-items:flex-start;">
-                                <input type="text" class="emmwt-dependent regular-text" id="emmwt_bg_url" name="emmwt_bg_url" value="<?php echo esc_url( $value_bg ); ?>" />
-                                <button class="emmwt-dependent button" type="button" id="emmwt_bg_upload"><?php esc_html_e( 'Select', 'easy-maintenance-timer' ); ?></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Clean Data on Uninstall', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <label class="emmwt-toggle" for="emmwt_delete_on_uninstall">
-                                <input type="checkbox" id="emmwt_delete_on_uninstall" name="emmwt_delete_on_uninstall" value="1" <?php checked( 1, get_option( 'emmwt_delete_on_uninstall', 0 ) ); ?> />
-                                <span class="emmwt-slider"></span>
-                            </label>
-                            <span class="emmwt-toggle-label"><?php esc_html_e( 'ON/OFF', 'easy-maintenance-timer' ); ?></span>
-                            <p class="description"><?php esc_html_e( 'If enabled, all plugin settings will be permanently deleted from your database if you delete the plugin.', 'easy-maintenance-timer' ); ?></p>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="emmwt-card">
-                <h3><?php esc_html_e( '2. Access Control (Bypass)', 'easy-maintenance-timer' ); ?></h3>
-                
-                <div style="background: #f0f6fc; border-left: 4px solid #72aee6; padding: 12px 15px; margin-bottom: 20px;">
-                    <strong><?php esc_html_e( 'Secret Client Bypass URL:', 'easy-maintenance-timer' ); ?></strong>
-                    <p style="margin: 5px 0 0 0;"><?php esc_html_e( 'Share this link with clients to bypass the screen without an account.', 'easy-maintenance-timer' ); ?></p>
-                    <code style="display: block; margin-top: 10px; padding: 8px; background: #fff; border: 1px solid #ccc;"><?php echo esc_url( $bypass_url ); ?></code>
-                </div>
-
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Allow these roles to bypass:', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <label style="display:block; margin-bottom:5px;">
-                                <input type="checkbox" checked disabled> Administrator (Always Allowed)
-                            </label>
-                            <?php 
-                            foreach ( $all_roles as $role_slug => $role_name ) {
-                                if ( $role_slug === 'administrator' ) continue; // Skip admin
-                                $checked = in_array( $role_slug, $saved_roles ) ? 'checked' : '';
-                                echo '<label style="display:block; margin-bottom:5px;">';
-                                // PCP FIX: Output Escaped
-                                echo '<input type="checkbox" class="emmwt-dependent" name="emmwt_bypass_roles[]" value="' . esc_attr( $role_slug ) . '" ' . esc_attr( $checked ) . '>';
-                                echo ' ' . esc_html( translate_user_role( $role_name ) );
-                                echo '</label>';
-                            }
-                            ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">
-                            <?php esc_html_e( 'IP Whitelist', 'easy-maintenance-timer' ); ?><br>
-                            <small style="font-weight:normal; color:#666;"><?php esc_html_e( 'Enter one IP address per line.', 'easy-maintenance-timer' ); ?></small>
-                        </th>
-                        <td>
-                            <textarea name="emmwt_bypass_ips" class="emmwt-dependent large-text" rows="4" placeholder="e.g. 192.168.1.1"><?php echo esc_textarea( $saved_ips ); ?></textarea>
-                            <?php if ( $current_ip ) : ?>
-                                <p class="description">
-                                    <?php esc_html_e( 'Your current IP address is:', 'easy-maintenance-timer' ); ?> 
-                                    <strong id="emmwt-current-ip"><?php echo esc_html( $current_ip ); ?></strong>
-                                    <button type="button" class="button button-small" id="emmwt-add-my-ip" style="margin-left: 10px;"><?php esc_html_e( 'Add My IP', 'easy-maintenance-timer' ); ?></button>
-                                </p>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Block REST API', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <label class="emmwt-toggle" for="emmwt_block_rest_api">
-                                <input type="checkbox" id="emmwt_block_rest_api" name="emmwt_block_rest_api" value="1" <?php checked( 1, get_option( 'emmwt_block_rest_api', 0 ) ); ?> />
-                                <span class="emmwt-slider"></span>
-                            </label>
-                            <p class="description"><?php esc_html_e( 'Blocks unauthorized data scraping via WordPress REST API during downtime.', 'easy-maintenance-timer' ); ?></p>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="emmwt-card">
-                <h3><?php esc_html_e( '3. Social & Contact Links', 'easy-maintenance-timer' ); ?></h3>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Enable Contact Icons', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <label class="emmwt-toggle" for="emmwt_enable_social">
-                                <input type="checkbox" id="emmwt_enable_social" class="emmwt-dependent" name="emmwt_enable_social" value="1" <?php checked( 1, get_option( 'emmwt_enable_social', 0 ) ); ?> />
-                                <span class="emmwt-slider"></span>
-                            </label>
-                        </td>
-                    </tr>
-                </table>
-                
-                <div id="emmwt-social-wrapper" style="display: <?php echo get_option('emmwt_enable_social', 0) ? 'block' : 'none'; ?>; padding-top: 15px; border-top: 1px solid #f0f0f1;">
+            <!-- TAB 1: GENERAL SETTINGS -->
+            <div id="tab-general" class="emmwt-tab-pane" style="display: block;">
+                <div class="emmwt-card">
+                    <h3><?php esc_html_e( '1. General Settings', 'easy-maintenance-timer' ); ?></h3>
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><?php esc_html_e( 'Email Address', 'easy-maintenance-timer' ); ?></th>
-                            <td><input type="email" name="emmwt_social_email" class="regular-text" value="<?php echo esc_attr( get_option('emmwt_social_email', '') ); ?>" placeholder="hello@yoursite.com" /></td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php esc_html_e( 'WhatsApp Number', 'easy-maintenance-timer' ); ?></th>
+                            <th scope="row"><?php esc_html_e( 'Enable Maintenance Mode', 'easy-maintenance-timer' ); ?></th>
                             <td>
-                                <?php 
-                                // Strip old HTTP data stuck in the database
-                                $clean_wa = str_replace( array('http://', 'https://'), '', get_option('emmwt_social_wa', '') ); 
-                                ?>
-                                <input type="text" name="emmwt_social_wa" class="regular-text" value="<?php echo esc_attr( $clean_wa ); ?>" placeholder="e.g. +1234567890" />
+                                <label class="emmwt-toggle" for="emmwt_enabled">
+                                    <input type="checkbox" id="emmwt_enabled" name="emmwt_enabled" value="1" <?php checked( 1, get_option( 'emmwt_enabled', 0 ) ); ?> />
+                                    <span class="emmwt-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>                    
+                            <th scope="row"><?php esc_html_e( 'Countdown End Date/Time', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <input type="text" id="emmwt_datepicker" name="emmwt_countdown_date" class="emmwt-dependent" value="<?php echo esc_attr( $value_date ); ?>" required />
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><?php esc_html_e( 'Facebook URL', 'easy-maintenance-timer' ); ?></th>
-                            <td><input type="url" name="emmwt_social_fb" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_fb', '') ); ?>" /></td>
+                            <th scope="row"><?php esc_html_e( 'Maintenance Message', 'easy-maintenance-timer' ); ?></th>
+                            <td><input type="text" name="emmwt_maint_message" class="emmwt-dependent regular-text" value="<?php echo esc_attr( $value_msg ); ?>" /></td>
                         </tr>
                         <tr>
-                            <th scope="row"><?php esc_html_e( 'X (Twitter) URL', 'easy-maintenance-timer' ); ?></th>
-                            <td><input type="url" name="emmwt_social_tw" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_tw', '') ); ?>" /></td>
+                            <th scope="row"><?php esc_html_e( 'Logo URL', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <div style="display:flex; gap:10px; align-items:flex-start;">
+                                    <input type="text" class="emmwt-dependent regular-text" id="emmwt_logo_url" name="emmwt_logo_url" value="<?php echo esc_url( $value_logo ); ?>" placeholder="Leave blank for clean SVG icon" />
+                                    <button class="emmwt-dependent button" type="button" id="emmwt_logo_upload"><?php esc_html_e( 'Select', 'easy-maintenance-timer' ); ?></button>
+                                </div>
+                                <?php if ( $value_logo ) : ?>
+                                    <img src="<?php echo esc_url( $value_logo ); ?>" class="emmwt-logo-preview" alt="Logo" />
+                                <?php endif; ?>
+                            </td>
                         </tr>
                         <tr>
-                            <th scope="row"><?php esc_html_e( 'LinkedIn URL', 'easy-maintenance-timer' ); ?></th>
-                            <td><input type="url" name="emmwt_social_li" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_li', '') ); ?>" /></td>
+                            <th scope="row"><?php esc_html_e( 'Background Image', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <div style="display:flex; gap:10px; align-items:flex-start;">
+                                    <input type="text" class="emmwt-dependent regular-text" id="emmwt_bg_url" name="emmwt_bg_url" value="<?php echo esc_url( $value_bg ); ?>" />
+                                    <button class="emmwt-dependent button" type="button" id="emmwt_bg_upload"><?php esc_html_e( 'Select', 'easy-maintenance-timer' ); ?></button>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <th scope="row"><?php esc_html_e( 'Instagram URL', 'easy-maintenance-timer' ); ?></th>
-                            <td><input type="url" name="emmwt_social_ig" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_ig', '') ); ?>" /></td>
+                            <th scope="row"><?php esc_html_e( 'Clean Data on Uninstall', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <label class="emmwt-toggle" for="emmwt_delete_on_uninstall">
+                                    <input type="checkbox" id="emmwt_delete_on_uninstall" name="emmwt_delete_on_uninstall" value="1" <?php checked( 1, get_option( 'emmwt_delete_on_uninstall', 0 ) ); ?> />
+                                    <span class="emmwt-slider"></span>
+                                </label>
+                                <span class="emmwt-toggle-label"><?php esc_html_e( 'ON/OFF', 'easy-maintenance-timer' ); ?></span>
+                                <p class="description"><?php esc_html_e( 'If enabled, all plugin settings will be permanently deleted from your database if you delete the plugin.', 'easy-maintenance-timer' ); ?></p>
+                            </td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-            <div class="emmwt-card">
-                <h3><?php esc_html_e( '4. Custom CSS', 'easy-maintenance-timer' ); ?></h3>
-                <p class="description" style="margin-bottom: 15px;">
-                    <?php esc_html_e( 'Add your own custom CSS to override the default maintenance page styles. Do NOT include <style> tags.', 'easy-maintenance-timer' ); ?>
-                </p>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php esc_html_e( 'Custom Styles', 'easy-maintenance-timer' ); ?></th>
-                        <td>
-                            <textarea name="emmwt_custom_css" class="large-text" rows="6" placeholder="body.emmwt-maintenance-mode { background-color: #000; }&#10;.emmwt-content-wrapper { border-radius: 10px; }"><?php echo esc_textarea( get_option( 'emmwt_custom_css', '' ) ); ?></textarea>
-                        </td>
-                    </tr>
-                </table>
+            <!-- TAB 2: ACCESS CONTROL -->
+            <div id="tab-access" class="emmwt-tab-pane" style="display: none;">
+                <div class="emmwt-card">
+                    <h3><?php esc_html_e( '2. Access Control (Bypass)', 'easy-maintenance-timer' ); ?></h3>
+                    
+                    <div style="background: #f0f6fc; border-left: 4px solid #72aee6; padding: 12px 15px; margin-bottom: 20px;">
+                        <strong><?php esc_html_e( 'Secret Client Bypass URL:', 'easy-maintenance-timer' ); ?></strong>
+                        <p style="margin: 5px 0 0 0;"><?php esc_html_e( 'Share this link with clients to bypass the screen without an account.', 'easy-maintenance-timer' ); ?></p>
+                        <code style="display: block; margin-top: 10px; padding: 8px; background: #fff; border: 1px solid #ccc;"><?php echo esc_url( $bypass_url ); ?></code>
+                    </div>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Allow these roles to bypass:', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <label style="display:block; margin-bottom:5px;">
+                                    <input type="checkbox" checked disabled> Administrator (Always Allowed)
+                                </label>
+                                <?php 
+                                foreach ( $all_roles as $role_slug => $role_name ) {
+                                    if ( $role_slug === 'administrator' ) continue; // Skip admin
+                                    $checked = in_array( $role_slug, $saved_roles ) ? 'checked' : '';
+                                    echo '<label style="display:block; margin-bottom:5px;">';
+                                    // PCP FIX: Output Escaped
+                                    echo '<input type="checkbox" class="emmwt-dependent" name="emmwt_bypass_roles[]" value="' . esc_attr( $role_slug ) . '" ' . esc_attr( $checked ) . '>';
+                                    echo ' ' . esc_html( translate_user_role( $role_name ) );
+                                    echo '</label>';
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                                <?php esc_html_e( 'IP Whitelist', 'easy-maintenance-timer' ); ?><br>
+                                <small style="font-weight:normal; color:#666;"><?php esc_html_e( 'Enter one IP address per line.', 'easy-maintenance-timer' ); ?></small>
+                            </th>
+                            <td>
+                                <textarea name="emmwt_bypass_ips" class="emmwt-dependent large-text" rows="4" placeholder="e.g. 192.168.1.1"><?php echo esc_textarea( $saved_ips ); ?></textarea>
+                                <?php if ( $current_ip ) : ?>
+                                    <p class="description">
+                                        <?php esc_html_e( 'Your current IP address is:', 'easy-maintenance-timer' ); ?> 
+                                        <strong id="emmwt-current-ip"><?php echo esc_html( $current_ip ); ?></strong>
+                                        <button type="button" class="button button-small" id="emmwt-add-my-ip" style="margin-left: 10px;"><?php esc_html_e( 'Add My IP', 'easy-maintenance-timer' ); ?></button>
+                                    </p>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Block REST API', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <label class="emmwt-toggle" for="emmwt_block_rest_api">
+                                    <input type="checkbox" id="emmwt_block_rest_api" name="emmwt_block_rest_api" value="1" <?php checked( 1, get_option( 'emmwt_block_rest_api', 0 ) ); ?> />
+                                    <span class="emmwt-slider"></span>
+                                </label>
+                                <p class="description"><?php esc_html_e( 'Blocks unauthorized data scraping via WordPress REST API during downtime.', 'easy-maintenance-timer' ); ?></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
-            <div class="emmwt-card" style="border-left: 4px solid #2271b1; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-                
-                <div style="flex: 1; min-width: 300px;">
-                    <h3 style="margin-top: 0; font-size: 1.1em;"><?php esc_html_e( 'Need Help or Want to Contribute?', 'easy-maintenance-timer' ); ?></h3>
-                    <p style="margin: 5px 0 0; color: #50575e;">
-                        <?php esc_html_e( 'If you encounter any issues, have a feature request, or want to review the code, check out our repository or reach out directly!', 'easy-maintenance-timer' ); ?>
-                    </p>
-                </div>
-
-                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <a href="<?php echo esc_url( 'https://github.com/abdulnasir1995/easy-maintenance-timer' ); ?>" target="_blank" rel="noopener noreferrer" class="button button-secondary">
-                        <span class="dashicons dashicons-editor-code" style="vertical-align: middle; margin-top: -17px;"></span> 
-                        <span style="vertical-align: middle;"><?php esc_html_e( 'GitHub Repository', 'easy-maintenance-timer' ); ?></span>
-                    </a>
+            <!-- TAB 3: SOCIAL & CONTACT -->
+            <div id="tab-social" class="emmwt-tab-pane" style="display: none;">
+                <div class="emmwt-card">
+                    <h3><?php esc_html_e( '3. Social & Contact Links', 'easy-maintenance-timer' ); ?></h3>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Enable Contact Icons', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <label class="emmwt-toggle" for="emmwt_enable_social">
+                                    <input type="checkbox" id="emmwt_enable_social" class="emmwt-dependent" name="emmwt_enable_social" value="1" <?php checked( 1, get_option( 'emmwt_enable_social', 0 ) ); ?> />
+                                    <span class="emmwt-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
                     
-                    <a href="<?php echo esc_url( 'mailto:muhammed.qutubuddin786+plugin@gmail.com' ); ?>" class="button button-primary">
-                        <span class="dashicons dashicons-email-alt" style="vertical-align: middle; margin-top: -17px;"></span> 
-                        <span style="vertical-align: middle;"><?php esc_html_e( 'Contact Support', 'easy-maintenance-timer' ); ?></span>
-                    </a>
+                    <div id="emmwt-social-wrapper" style="display: <?php echo get_option('emmwt_enable_social', 0) ? 'block' : 'none'; ?>; padding-top: 15px; border-top: 1px solid #f0f0f1;">
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php esc_html_e( 'Email Address', 'easy-maintenance-timer' ); ?></th>
+                                <td><input type="email" name="emmwt_social_email" class="regular-text" value="<?php echo esc_attr( get_option('emmwt_social_email', '') ); ?>" placeholder="hello@yoursite.com" /></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php esc_html_e( 'WhatsApp Number', 'easy-maintenance-timer' ); ?></th>
+                                <td>
+                                    <?php 
+                                    // Strip old HTTP data stuck in the database
+                                    $clean_wa = str_replace( array('http://', 'https://'), '', get_option('emmwt_social_wa', '') ); 
+                                    ?>
+                                    <input type="text" name="emmwt_social_wa" class="regular-text" value="<?php echo esc_attr( $clean_wa ); ?>" placeholder="e.g. +1234567890" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php esc_html_e( 'Facebook URL', 'easy-maintenance-timer' ); ?></th>
+                                <td><input type="url" name="emmwt_social_fb" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_fb', '') ); ?>" /></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php esc_html_e( 'X (Twitter) URL', 'easy-maintenance-timer' ); ?></th>
+                                <td><input type="url" name="emmwt_social_tw" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_tw', '') ); ?>" /></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php esc_html_e( 'LinkedIn URL', 'easy-maintenance-timer' ); ?></th>
+                                <td><input type="url" name="emmwt_social_li" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_li', '') ); ?>" /></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php esc_html_e( 'Instagram URL', 'easy-maintenance-timer' ); ?></th>
+                                <td><input type="url" name="emmwt_social_ig" class="regular-text" value="<?php echo esc_url( get_option('emmwt_social_ig', '') ); ?>" /></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                
+            </div>
+
+            <!-- TAB 4: CUSTOM CSS -->
+            <div id="tab-css" class="emmwt-tab-pane" style="display: none;">
+                <div class="emmwt-card">
+                    <h3><?php esc_html_e( '4. Custom CSS', 'easy-maintenance-timer' ); ?></h3>
+                    <p class="description" style="margin-bottom: 15px;">
+                        <?php esc_html_e( 'Add your own custom CSS to override the default maintenance page styles. Do NOT include <style> tags.', 'easy-maintenance-timer' ); ?>
+                    </p>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Custom Styles', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <textarea name="emmwt_custom_css" class="large-text" rows="6" placeholder="body.emmwt-maintenance-mode { background-color: #000; }&#10;.emmwt-content-wrapper { border-radius: 10px; }"><?php echo esc_textarea( get_option( 'emmwt_custom_css', '' ) ); ?></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 5: SUPPORT -->
+            <div id="tab-support" class="emmwt-tab-pane" style="display: none;">
+                <div class="emmwt-card" style="border-left: 4px solid #2271b1; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                    
+                    <div style="flex: 1; min-width: 300px;">
+                        <h3 style="margin-top: 0; font-size: 1.1em;"><?php esc_html_e( 'Need Help or Want to Contribute?', 'easy-maintenance-timer' ); ?></h3>
+                        <p style="margin: 5px 0 0; color: #50575e;">
+                            <?php esc_html_e( 'If you encounter any issues, have a feature request, or want to review the code, check out our repository or reach out directly!', 'easy-maintenance-timer' ); ?>
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <a href="<?php echo esc_url( 'https://github.com/abdulnasir1995/easy-maintenance-timer' ); ?>" target="_blank" rel="noopener noreferrer" class="button button-secondary">
+                            <span class="dashicons dashicons-editor-code" style="vertical-align: middle; margin-top: -17px;"></span> 
+                            <span style="vertical-align: middle;"><?php esc_html_e( 'GitHub Repository', 'easy-maintenance-timer' ); ?></span>
+                        </a>
+                        
+                        <a href="<?php echo esc_url( 'mailto:muhammed.qutubuddin786+plugin@gmail.com' ); ?>" class="button button-primary">
+                            <span class="dashicons dashicons-email-alt" style="vertical-align: middle; margin-top: -17px;"></span> 
+                            <span style="vertical-align: middle;"><?php esc_html_e( 'Contact Support', 'easy-maintenance-timer' ); ?></span>
+                        </a>
+                    </div>
+                    
+                </div>
             </div>
 
             <p class="submit">
