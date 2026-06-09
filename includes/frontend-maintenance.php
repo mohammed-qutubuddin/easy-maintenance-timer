@@ -73,6 +73,26 @@ function emmwt_disable_rest_api( $result ) {
 }
 add_filter( 'rest_authentication_errors', 'emmwt_disable_rest_api' );
 
+/**
+ * Output Custom CSS in the frontend <head>
+ * PCP Standard: Uses wp_strip_all_tags on output to ensure no malicious HTML/scripts are injected.
+ */
+function emmwt_output_custom_css() {
+    // Only output if maintenance mode is enabled
+    if ( ! get_option( 'emmwt_enabled', 0 ) ) return;
+
+    $custom_css = get_option( 'emmwt_custom_css', '' );
+    
+    if ( ! empty( $custom_css ) ) {
+        // Echo out the style block securely
+        echo "\n" . '' . "\n";
+        echo '<style id="emmwt-custom-css">' . "\n";
+        echo wp_strip_all_tags( $custom_css ) . "\n";
+        echo '</style>' . "\n";
+    }
+}
+add_action( 'wp_head', 'emmwt_output_custom_css' );
+
 function emmwt_enqueue_frontend_assets() {
     if ( ! get_option( 'emmwt_enabled', 0 ) || emmwt_check_bypass_access() ) return;
 

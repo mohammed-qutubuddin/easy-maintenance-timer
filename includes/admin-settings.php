@@ -40,6 +40,9 @@ function emmwt_register_settings() {
 
     // REST API Protection
     register_setting( 'emmwt_settings_group', 'emmwt_block_rest_api', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
+
+    // Custom CSS
+    register_setting( 'emmwt_settings_group', 'emmwt_custom_css', [ 'sanitize_callback' => 'wp_strip_all_tags' ] );
 }
 add_action( 'admin_init', 'emmwt_register_settings' );
 
@@ -265,6 +268,21 @@ function emmwt_settings_page_callback() {
                         </tr>
                     </table>
                 </div>
+            </div>
+
+            <div class="emmwt-card">
+                <h3><?php esc_html_e( '4. Custom CSS', 'easy-maintenance-timer' ); ?></h3>
+                <p class="description" style="margin-bottom: 15px;">
+                    <?php esc_html_e( 'Add your own custom CSS to override the default maintenance page styles. Do NOT include <style> tags.', 'easy-maintenance-timer' ); ?>
+                </p>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Custom Styles', 'easy-maintenance-timer' ); ?></th>
+                        <td>
+                            <textarea name="emmwt_custom_css" class="large-text" rows="6" placeholder="body.emmwt-maintenance-mode { background-color: #000; }&#10;.emmwt-content-wrapper { border-radius: 10px; }"><?php echo esc_textarea( get_option( 'emmwt_custom_css', '' ) ); ?></textarea>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <p class="submit">
