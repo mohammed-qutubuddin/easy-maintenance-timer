@@ -308,28 +308,61 @@ function emmwt_settings_page_callback() {
 
             <!-- TAB 5: SUPPORT -->
             <div id="tab-support" class="emmwt-tab-pane" style="display: none;">
-                <div class="emmwt-card" style="border-left: 4px solid #2271b1; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-                    
+                
+                <!-- Existing Support Links Card -->
+                <div class="emmwt-card" style="border-left: 4px solid #2271b1; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
                     <div style="flex: 1; min-width: 300px;">
                         <h3 style="margin-top: 0; font-size: 1.1em;"><?php esc_html_e( 'Need Help or Want to Contribute?', 'easy-maintenance-timer' ); ?></h3>
                         <p style="margin: 5px 0 0; color: #50575e;">
                             <?php esc_html_e( 'If you encounter any issues, have a feature request, or want to review the code, check out our repository or reach out directly!', 'easy-maintenance-timer' ); ?>
                         </p>
                     </div>
-
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <a href="<?php echo esc_url( 'https://github.com/abdulnasir1995/easy-maintenance-timer' ); ?>" target="_blank" rel="noopener noreferrer" class="button button-secondary">
                             <span class="dashicons dashicons-editor-code" style="vertical-align: middle; margin-top: -17px;"></span> 
                             <span style="vertical-align: middle;"><?php esc_html_e( 'GitHub Repository', 'easy-maintenance-timer' ); ?></span>
                         </a>
-                        
-                        <a href="<?php echo esc_url( 'mailto:muhammed.qutubuddin786+plugin@gmail.com' ); ?>" class="button button-primary">
-                            <span class="dashicons dashicons-email-alt" style="vertical-align: middle; margin-top: -17px;"></span> 
-                            <span style="vertical-align: middle;"><?php esc_html_e( 'Contact Support', 'easy-maintenance-timer' ); ?></span>
-                        </a>
                     </div>
-                    
                 </div>
+
+                <!-- Support Ticket Form Card -->
+                <div class="emmwt-card">
+                    <h3><?php esc_html_e( 'Submit a Support Ticket', 'easy-maintenance-timer' ); ?></h3>
+                    <p class="description"><?php esc_html_e( 'Found a bug or have a suggestion? Send us a message directly from here. We will reply to your WordPress admin email.', 'easy-maintenance-timer' ); ?></p>
+                    
+                    <div id="emmwt-support-notice" style="display:none; padding:10px; margin: 15px 0; border-left:4px solid;"></div>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="emmwt_support_type"><?php esc_html_e( 'Type of Inquiry', 'easy-maintenance-timer' ); ?></label></th>
+                            <td>
+                                <select id="emmwt_support_type" class="regular-text">
+                                    <option value="Bug Report"><?php esc_html_e( 'Bug Report', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="Feature Request"><?php esc_html_e( 'Feature Request', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="General Support"><?php esc_html_e( 'General Support', 'easy-maintenance-timer' ); ?></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="emmwt_support_message"><?php esc_html_e( 'Your Message', 'easy-maintenance-timer' ); ?></label></th>
+                            <td>
+                                <textarea id="emmwt_support_message" class="large-text" rows="5" placeholder="<?php esc_attr_e( 'Please describe your issue or feature request in detail...', 'easy-maintenance-timer' ); ?>"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td>
+                                <button type="button" id="emmwt_submit_support" class="button button-primary">
+                                    <span class="dashicons dashicons-email-alt" style="vertical-align: middle; margin-top: -17px;"></span> 
+                                    <span style="vertical-align: middle;"><?php esc_html_e( 'Send Message', 'easy-maintenance-timer' ); ?></span>
+                                </button>
+                                <span id="emmwt-support-spinner" class="spinner" style="float: none; margin-top: 4px;"></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <?php wp_nonce_field( 'emmwt_support_nonce', 'emmwt_support_nonce_field' ); ?>
+                </div>
+
             </div>
 
             <p class="submit">
@@ -358,3 +391,51 @@ function emmwt_admin_settings_enqueue( $hook ) {
     ) );
 }
 add_action( 'admin_enqueue_scripts', 'emmwt_admin_settings_enqueue' );
+
+/**
+ * AJAX Handler for Support Form
+ * PCP Compliant: Nonce check, capabilities check, and sanitization applied.
+ */
+function emmwt_handle_support_submission() {
+    // 1. Verify Nonce (Security Check)
+    check_ajax_referer( 'emmwt_support_nonce', 'security' );
+
+    // 2. Verify Permissions
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( __( 'Unauthorized access.', 'easy-maintenance-timer' ) );
+    }
+
+    // 3. Sanitize Inputs
+    $type    = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
+    $message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+
+    if ( empty( $message ) ) {
+        wp_send_json_error( __( 'Message field cannot be empty.', 'easy-maintenance-timer' ) );
+    }
+
+    // 4. Prepare Email Data
+    $current_user = wp_get_current_user();
+    $site_url     = site_url();
+    $to           = 'muhammed.qutubuddin786+plugin@gmail.com'; // Your email
+    $subject      = sprintf( '[Easy Maintenance Timer] %s from %s', $type, $site_url );
+    
+    $body  = "Type of Inquiry: $type\n";
+    $body .= "Website: $site_url\n";
+    $body .= "Sender Email: {$current_user->user_email}\n\n";
+    $body .= "Message:\n$message\n";
+    
+    $headers = array(
+        'Content-Type: text/plain; charset=UTF-8', 
+        'Reply-To: ' . $current_user->user_email
+    );
+
+    // 5. Send Email
+    $sent = wp_mail( $to, $subject, $body, $headers );
+
+    if ( $sent ) {
+        wp_send_json_success( __( 'Your message has been sent successfully! We will get back to you soon.', 'easy-maintenance-timer' ) );
+    } else {
+        wp_send_json_error( __( 'Failed to send message. Please check your server email configurations.', 'easy-maintenance-timer' ) );
+    }
+}
+add_action( 'wp_ajax_emmwt_submit_support', 'emmwt_handle_support_submission' );

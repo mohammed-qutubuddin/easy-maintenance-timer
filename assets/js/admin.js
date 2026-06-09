@@ -194,4 +194,62 @@ jQuery(document).ready(function ($) {
     if (activeTab && $(activeTab).length) {
         $('.emmwt-nav-tabs .nav-tab[href="' + activeTab + '"]').click();
     }
+
+    // --- Support Form AJAX Submission ---
+    $('#emmwt_submit_support').on('click', function(e) {
+        e.preventDefault();
+        
+        var $btn = $(this);
+        var $spinner = $('#emmwt-support-spinner');
+        var $notice = $('#emmwt-support-notice');
+        var type = $('#emmwt_support_type').val();
+        var message = $('#emmwt_support_message').val().trim();
+        var nonce = $('#emmwt_support_nonce_field').val();
+        
+        if (!message) {
+            $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> Please enter a message before sending.</p>')
+                   .css({'border-color': '#d63638', 'background': '#fcf0f1'})
+                   .slideDown();
+            return;
+        }
+
+        // Show spinner and disable button
+        $btn.prop('disabled', true);
+        $spinner.addClass('is-active');
+        $notice.slideUp();
+
+        // AJAX Request
+        $.ajax({
+            url: ajaxurl, // Native WordPress global var
+            type: 'POST',
+            data: {
+                action: 'emmwt_submit_support',
+                security: nonce,
+                type: type,
+                message: message
+            },
+            success: function(response) {
+                $btn.prop('disabled', false);
+                $spinner.removeClass('is-active');
+                
+                if (response.success) {
+                    $notice.html('<p style="color:#00a32a; margin:0;"><strong>Success:</strong> ' + response.data + '</p>')
+                           .css({'border-color': '#00a32a', 'background': '#f3faef'})
+                           .slideDown();
+                    $('#emmwt_support_message').val(''); // Reset message box
+                } else {
+                    $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> ' + response.data + '</p>')
+                           .css({'border-color': '#d63638', 'background': '#fcf0f1'})
+                           .slideDown();
+                }
+            },
+            error: function() {
+                $btn.prop('disabled', false);
+                $spinner.removeClass('is-active');
+                $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> An unexpected server error occurred.</p>')
+                       .css({'border-color': '#d63638', 'background': '#fcf0f1'})
+                       .slideDown();
+            }
+        });
+    });
 });
