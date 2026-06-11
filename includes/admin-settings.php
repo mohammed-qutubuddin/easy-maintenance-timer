@@ -1,6 +1,6 @@
 <?php
 /**
- * Add settings page to WP Admin Menu.
+ * Settings page rendering and registration.
  */
 if ( ! defined( 'ABSPATH' ) ) {
     exit; 
@@ -23,11 +23,7 @@ function emmwt_register_settings() {
     register_setting( 'emmwt_settings_group', 'emmwt_logo_url', [ 'sanitize_callback' => 'esc_url_raw' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_bg_url', [ 'sanitize_callback' => 'esc_url_raw' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_enabled', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
-    
-    // Bypass Roles
     register_setting( 'emmwt_settings_group', 'emmwt_bypass_roles', [ 'sanitize_callback' => 'emmwt_sanitize_array' ] );
-
-    // Social & Contact
     register_setting( 'emmwt_settings_group', 'emmwt_enable_social', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_social_email', [ 'sanitize_callback' => 'sanitize_email' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_social_fb', [ 'sanitize_callback' => 'esc_url_raw' ] );
@@ -37,87 +33,51 @@ function emmwt_register_settings() {
     register_setting( 'emmwt_settings_group', 'emmwt_social_ig', [ 'sanitize_callback' => 'esc_url_raw' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_delete_on_uninstall', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_bypass_ips', [ 'sanitize_callback' => 'emmwt_sanitize_ips' ] );
-
-    // REST API Protection
     register_setting( 'emmwt_settings_group', 'emmwt_block_rest_api', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
-
-    // Custom CSS
     register_setting( 'emmwt_settings_group', 'emmwt_custom_css', [ 'sanitize_callback' => 'wp_strip_all_tags' ] );
-
-    // NEW: Description & Typography Fields (PCP Sanitized)
     register_setting( 'emmwt_settings_group', 'emmwt_maint_description', [ 'sanitize_callback' => 'sanitize_textarea_field' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_msg_color', [ 'sanitize_callback' => 'sanitize_hex_color' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_desc_color', [ 'sanitize_callback' => 'sanitize_hex_color' ] );
-
-    // NEW: Font Family Selector
     register_setting( 'emmwt_settings_group', 'emmwt_font_family', [ 'sanitize_callback' => 'sanitize_text_field' ] );
-
-    // NEW: SEO Meta Data (PCP Sanitized)
     register_setting( 'emmwt_settings_group', 'emmwt_seo_title', [ 'sanitize_callback' => 'sanitize_text_field' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_seo_meta_desc', [ 'sanitize_callback' => 'sanitize_textarea_field' ] );
-
-    // NEW: Mode Type (Maintenance vs Coming Soon)
     register_setting( 'emmwt_settings_group', 'emmwt_status_type', [ 'sanitize_callback' => 'sanitize_text_field' ] );
-
-    // NEW: Custom Tracking Scripts
     register_setting( 'emmwt_settings_group', 'emmwt_custom_scripts', [ 'sanitize_callback' => 'emmwt_sanitize_scripts' ] );
-
-    // NEW: Background Overlay Settings
     register_setting( 'emmwt_settings_group', 'emmwt_bg_overlay_color', [ 'sanitize_callback' => 'sanitize_hex_color' ] );
     register_setting( 'emmwt_settings_group', 'emmwt_bg_overlay_opacity', [ 'sanitize_callback' => 'absint' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_enable_subscribe', [ 'sanitize_callback' => 'absint' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_bg_animation', [ 'sanitize_callback' => 'sanitize_text_field' ] );
+    register_setting( 'emmwt_settings_group', 'emmwt_notify_admin', [ 'sanitize_callback' => 'emmwt_sanitize_checkbox' ] );
 }
 add_action( 'admin_init', 'emmwt_register_settings' );
 
-function emmwt_sanitize_ips( $value ) {
-    $ips = explode( "\n", str_replace( "\r", "", $value ) );
-    $clean_ips = array_filter( array_map( 'trim', $ips ), function( $ip ) {
-        return filter_var( $ip, FILTER_VALIDATE_IP );
-    } );
-    return implode( "\n", array_unique( $clean_ips ) );
-}
+function emmwt_admin_settings_enqueue( $hook ) {
+    if ( 'settings_page_emmwt_settings' !== $hook ) return;
 
-// Custom Sanitizer for Scripts (PCP Compliant)
-function emmwt_sanitize_scripts( $value ) {
-    if ( current_user_can( 'unfiltered_html' ) ) {
-        return $value; // Admins can save raw scripts
-    }
-    return wp_kses_post( $value ); // Fallback safety for non-admins
+    wp_enqueue_media();
+    wp_enqueue_style( 'wp-color-picker' );
+    wp_enqueue_style( 'flatpickr-css', EMMWT_PLUGIN_URL . 'assets/css/flatpickr.min.css', array(), '4.6.13' );
+    wp_enqueue_script( 'flatpickr-js', EMMWT_PLUGIN_URL . 'assets/js/flatpickr.min.js', array('jquery'), '4.6.13', true );
+    wp_enqueue_style( 'emmwt-admin-css', EMMWT_PLUGIN_URL . 'assets/css/admin.css', array(), EMMWT_VERSION );
+    wp_enqueue_script( 'emmwt-admin-settings-js', EMMWT_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'flatpickr-js', 'wp-color-picker' ), EMMWT_VERSION, true );
+    
+    wp_localize_script( 'emmwt-admin-settings-js', 'emmwt_admin', array(
+        'title_logo' => esc_html__( 'Select or Upload Logo', 'easy-maintenance-timer' ),
+        'title_bg'   => esc_html__( 'Select or Upload Background', 'easy-maintenance-timer' ),
+    ) );
 }
-
-function emmwt_sanitize_checkbox( $value ) {
-    return ( $value === '1' ) ? '1' : '0';
-}
-
-function emmwt_sanitize_array( $value ) {
-    return is_array( $value ) ? array_map( 'sanitize_text_field', $value ) : [];
-}
-
-function emmwt_flush_caches_on_toggle( $old_value, $value, $option ) {
-    if ( $old_value !== $value ) {
-        if ( function_exists( 'rocket_clean_domain' ) ) rocket_clean_domain();
-        
-        // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-        if ( has_action( 'litespeed_purge_all' ) ) do_action( 'litespeed_purge_all' );
-        
-        if ( function_exists( 'w3tc_flush_all' ) ) w3tc_flush_all();
-        wp_cache_flush();
-    }
-}
-add_action( 'update_option_emmwt_enabled', 'emmwt_flush_caches_on_toggle', 10, 3 );
+add_action( 'admin_enqueue_scripts', 'emmwt_admin_settings_enqueue' );
 
 /**
  * Render the plugin settings page.
  */
 function emmwt_settings_page_callback() {
+    $bg_animation = (string) get_option( 'emmwt_bg_animation', 'none' );
     $bg_overlay_color   = (string) get_option( 'emmwt_bg_overlay_color', '#000000' );
-    $bg_overlay_opacity = (int) get_option( 'emmwt_bg_overlay_opacity', 50 ); // Default 50% opacity
-
+    $bg_overlay_opacity = (int) get_option( 'emmwt_bg_overlay_opacity', 50 ); 
     $default_date = gmdate( 'Y-m-d H:i', strtotime( '+1 day' ) );
-
     $saved_ips  = (string) get_option( 'emmwt_bypass_ips', '' );
     $current_ip = function_exists( 'emmwt_get_visitor_ip' ) ? emmwt_get_visitor_ip() : '';
-    
-    // Values
     $value_msg   = (string) get_option( 'emmwt_maint_message', 'Site Under Maintenance. Please check back soon.' );
     $value_logo  = (string) get_option( 'emmwt_logo_url', '' );
     $value_bg    = (string) get_option( 'emmwt_bg_url', '' ); 
@@ -127,16 +87,21 @@ function emmwt_settings_page_callback() {
     $msg_color  = (string) get_option( 'emmwt_msg_color', '#000000' );
     $desc_color = (string) get_option( 'emmwt_desc_color', '#50575e' );
     $font_family = (string) get_option( 'emmwt_font_family', 'system' );
-
     $bypass_url  = add_query_arg( 'emmwt_bypass', 'true', site_url() );
-    $preview_url = add_query_arg( 'emmwt_preview', 'true', site_url() ); // NEW: Preview URL
-
+    $preview_url = add_query_arg( 'emmwt_preview', 'true', site_url() ); 
     $seo_title = (string) get_option( 'emmwt_seo_title', '' );
     $seo_desc  = (string) get_option( 'emmwt_seo_meta_desc', '' );
-
     $status_type = (string) get_option( 'emmwt_status_type', 'maintenance' );
+
+    // Fetch Subscribers for TAB 6
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'emmwt_subscribers';
+    $subscribers = [];
+    if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) === $table_name ) {
+        $subscribers = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY subscribed_at DESC" );
+    }
     
-    // Get all WP roles for the checkboxes
+    // Get all WP roles
     global $wp_roles;
     if ( ! isset( $wp_roles ) ) $wp_roles = new WP_Roles();
     $all_roles = $wp_roles->get_names();
@@ -154,23 +119,20 @@ function emmwt_settings_page_callback() {
         </div>
         
         <h2 class="nav-tab-wrapper emmwt-nav-tabs" style="margin-bottom: 20px;">
-        
-        <!-- NEW: NATIVE WORDPRESS TABS NAVIGATION -->
-        <h2 class="nav-tab-wrapper emmwt-nav-tabs" style="margin-bottom: 20px;">
             <a href="#tab-general" class="nav-tab nav-tab-active"><?php esc_html_e( 'General Settings', 'easy-maintenance-timer' ); ?></a>
             <a href="#tab-access" class="nav-tab"><?php esc_html_e( 'Access Control', 'easy-maintenance-timer' ); ?></a>
             <a href="#tab-social" class="nav-tab"><?php esc_html_e( 'Social & Contact', 'easy-maintenance-timer' ); ?></a>
             <a href="#tab-css" class="nav-tab"><?php esc_html_e( 'Custom CSS & Scripts', 'easy-maintenance-timer' ); ?></a>
+            <a href="#tab-subscribers" class="nav-tab"><?php esc_html_e( 'Subscribers', 'easy-maintenance-timer' ); ?></a>
             <a href="#tab-support" class="nav-tab"><?php esc_html_e( 'Support', 'easy-maintenance-timer' ); ?></a>
         </h2>
 
         <form method="post" action="options.php">
             <?php settings_fields( 'emmwt_settings_group' ); ?>
 
-            <!-- TAB 1: GENERAL SETTINGS -->
             <div id="tab-general" class="emmwt-tab-pane" style="display: block;">
                 <div class="emmwt-card">
-                    <h3><?php esc_html_e( '1. General Settings', 'easy-maintenance-timer' ); ?></h3>
+                    <h3><?php esc_html_e( 'General Settings', 'easy-maintenance-timer' ); ?></h3>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><?php esc_html_e( 'Enable Maintenance Mode', 'easy-maintenance-timer' ); ?></th>
@@ -197,6 +159,16 @@ function emmwt_settings_page_callback() {
                             <th scope="row"><?php esc_html_e( 'Countdown End Date/Time', 'easy-maintenance-timer' ); ?></th>
                             <td>
                                 <input type="text" id="emmwt_datepicker" name="emmwt_countdown_date" class="emmwt-dependent" value="<?php echo esc_attr( $value_date ); ?>" required />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Auto-Live Email Notification', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <label class="emmwt-toggle" for="emmwt_notify_admin">
+                                    <input type="checkbox" id="emmwt_notify_admin" name="emmwt_notify_admin" value="1" <?php checked( 1, get_option( 'emmwt_notify_admin', 1 ) ); ?> />
+                                    <span class="emmwt-slider"></span>
+                                </label>
+                                <p class="description"><?php esc_html_e( 'Send an automatic email to the site admin when the timer ends and the site goes live.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                         <tr>
@@ -235,7 +207,6 @@ function emmwt_settings_page_callback() {
                             <th scope="row"><?php esc_html_e( 'SEO Page Title', 'easy-maintenance-timer' ); ?></th>
                             <td>
                                 <input type="text" name="emmwt_seo_title" class="emmwt-dependent regular-text" value="<?php echo esc_attr( $seo_title ); ?>" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) . ' - ' . __( 'Maintenance', 'easy-maintenance-timer' ) ); ?>" />
-                                <p class="description"><?php esc_html_e( 'Custom <title> tag for search engines. Leave blank to use default site name.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                         <tr>
@@ -265,21 +236,28 @@ function emmwt_settings_page_callback() {
                                 </div>
                             </td>
                         </tr>
-                        <!-- NEW: Background Overlay -->
                         <tr>
                             <th scope="row"><?php esc_html_e( 'Background Overlay', 'easy-maintenance-timer' ); ?></th>
                             <td>
                                 <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
-                                    <!-- Overlay Color -->
                                     <input type="text" name="emmwt_bg_overlay_color" class="emmwt-color-picker emmwt-dependent" value="<?php echo esc_attr( $bg_overlay_color ); ?>" data-default-color="#000000" />
                                     
-                                    <!-- Overlay Opacity -->
                                     <div style="display:flex; align-items:center; gap:5px;">
                                         <label for="emmwt_bg_overlay_opacity"><?php esc_html_e( 'Opacity:', 'easy-maintenance-timer' ); ?></label>
                                         <input type="number" id="emmwt_bg_overlay_opacity" name="emmwt_bg_overlay_opacity" class="small-text emmwt-dependent" min="0" max="100" value="<?php echo esc_attr( $bg_overlay_opacity ); ?>" /> %
                                     </div>
                                 </div>
-                                <p class="description"><?php esc_html_e( 'Set an overlay color and opacity (0-100) to make text easier to read over images.', 'easy-maintenance-timer' ); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Background Animation', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <select name="emmwt_bg_animation" class="emmwt-dependent regular-text">
+                                    <option value="none" <?php selected( $bg_animation, 'none' ); ?>><?php esc_html_e( 'None (Static)', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="zoom" <?php selected( $bg_animation, 'zoom' ); ?>><?php esc_html_e( 'Slow Zoom (Ken Burns Effect - Needs Image)', 'easy-maintenance-timer' ); ?></option>
+                                    <option value="gradient" <?php selected( $bg_animation, 'gradient' ); ?>><?php esc_html_e( 'Animated Color Gradient (Image ignored)', 'easy-maintenance-timer' ); ?></option>
+                                </select>
+                                <p class="description"><?php esc_html_e( 'Add a modern, 100% pure CSS animation to your background without slowing down the site.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                         <tr>
@@ -290,17 +268,15 @@ function emmwt_settings_page_callback() {
                                     <span class="emmwt-slider"></span>
                                 </label>
                                 <span class="emmwt-toggle-label"><?php esc_html_e( 'ON/OFF', 'easy-maintenance-timer' ); ?></span>
-                                <p class="description"><?php esc_html_e( 'If enabled, all plugin settings will be permanently deleted from your database if you delete the plugin.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-            <!-- TAB 2: ACCESS CONTROL -->
             <div id="tab-access" class="emmwt-tab-pane" style="display: none;">
                 <div class="emmwt-card">
-                    <h3><?php esc_html_e( '2. Access Control (Bypass)', 'easy-maintenance-timer' ); ?></h3>
+                    <h3><?php esc_html_e( 'Access Control (Bypass)', 'easy-maintenance-timer' ); ?></h3>
                     
                     <div style="background: #f0f6fc; border-left: 4px solid #72aee6; padding: 12px 15px; margin-bottom: 20px;">
                         <strong><?php esc_html_e( 'Secret Client Bypass URL:', 'easy-maintenance-timer' ); ?></strong>
@@ -317,10 +293,9 @@ function emmwt_settings_page_callback() {
                                 </label>
                                 <?php 
                                 foreach ( $all_roles as $role_slug => $role_name ) {
-                                    if ( $role_slug === 'administrator' ) continue; // Skip admin
+                                    if ( $role_slug === 'administrator' ) continue;
                                     $checked = in_array( $role_slug, $saved_roles ) ? 'checked' : '';
                                     echo '<label style="display:block; margin-bottom:5px;">';
-                                    // PCP FIX: Output Escaped
                                     echo '<input type="checkbox" class="emmwt-dependent" name="emmwt_bypass_roles[]" value="' . esc_attr( $role_slug ) . '" ' . esc_attr( $checked ) . '>';
                                     echo ' ' . esc_html( translate_user_role( $role_name ) );
                                     echo '</label>';
@@ -351,17 +326,15 @@ function emmwt_settings_page_callback() {
                                     <input type="checkbox" id="emmwt_block_rest_api" name="emmwt_block_rest_api" value="1" <?php checked( 1, get_option( 'emmwt_block_rest_api', 0 ) ); ?> />
                                     <span class="emmwt-slider"></span>
                                 </label>
-                                <p class="description"><?php esc_html_e( 'Blocks unauthorized data scraping via WordPress REST API during downtime.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-            <!-- TAB 3: SOCIAL & CONTACT -->
             <div id="tab-social" class="emmwt-tab-pane" style="display: none;">
                 <div class="emmwt-card">
-                    <h3><?php esc_html_e( '3. Social & Contact Links', 'easy-maintenance-timer' ); ?></h3>
+                    <h3><?php esc_html_e( 'Social & Contact Links', 'easy-maintenance-timer' ); ?></h3>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><?php esc_html_e( 'Enable Contact Icons', 'easy-maintenance-timer' ); ?></th>
@@ -383,10 +356,7 @@ function emmwt_settings_page_callback() {
                             <tr>
                                 <th scope="row"><?php esc_html_e( 'WhatsApp Number', 'easy-maintenance-timer' ); ?></th>
                                 <td>
-                                    <?php 
-                                    // Strip old HTTP data stuck in the database
-                                    $clean_wa = str_replace( array('http://', 'https://'), '', get_option('emmwt_social_wa', '') ); 
-                                    ?>
+                                    <?php $clean_wa = str_replace( array('http://', 'https://'), '', get_option('emmwt_social_wa', '') ); ?>
                                     <input type="text" name="emmwt_social_wa" class="regular-text" value="<?php echo esc_attr( $clean_wa ); ?>" placeholder="e.g. +1234567890" />
                                 </td>
                             </tr>
@@ -411,36 +381,88 @@ function emmwt_settings_page_callback() {
                 </div>
             </div>
 
-            <!-- TAB 4: Custom CSS & Scripts -->
             <div id="tab-css" class="emmwt-tab-pane" style="display: none;">
                 <div class="emmwt-card">
-                    <h3><?php esc_html_e( '4. Custom CSS & Scripts', 'easy-maintenance-timer' ); ?></h3>
-                    <p class="description" style="margin-bottom: 15px;">
-                        <?php esc_html_e( 'Add your own custom CSS to override the default maintenance page styles. Do NOT include <style> tags.', 'easy-maintenance-timer' ); ?>
-                    </p>
+                    <h3><?php esc_html_e( 'Custom CSS & Scripts', 'easy-maintenance-timer' ); ?></h3>
                     <table class="form-table">
                         <tr>
                             <th scope="row"><?php esc_html_e( 'Custom Styles', 'easy-maintenance-timer' ); ?></th>
                             <td>
-                                <textarea name="emmwt_custom_css" class="large-text" rows="6" placeholder="body.emmwt-maintenance-mode { background-color: #000; }&#10;.emmwt-content-wrapper { border-radius: 10px; }"><?php echo esc_textarea( get_option( 'emmwt_custom_css', '' ) ); ?></textarea>
+                                <textarea name="emmwt_custom_css" class="large-text" rows="6" placeholder="body.emmwt-maintenance-mode { background-color: #000; }"><?php echo esc_textarea( get_option( 'emmwt_custom_css', '' ) ); ?></textarea>
                             </td>
                         </tr>
-                        <!-- NEW: Custom Tracking Scripts -->
                         <tr>
                             <th scope="row"><?php esc_html_e( 'Custom Tracking Scripts', 'easy-maintenance-timer' ); ?></th>
                             <td>
                                 <textarea name="emmwt_custom_scripts" class="large-text" rows="5" placeholder="<?php esc_attr_e( '<script>...your tracking code...</script>', 'easy-maintenance-timer' ); ?>"><?php echo esc_textarea( get_option( 'emmwt_custom_scripts', '' ) ); ?></textarea>
-                                <p class="description"><?php esc_html_e( 'Add your Google Analytics, Facebook Pixel, or any other tracking scripts here. You MUST include the <script> tags.', 'easy-maintenance-timer' ); ?></p>
                             </td>
                         </tr>
                     </table>
                 </div>
             </div>
 
-            <!-- TAB 5: SUPPORT -->
+            <div id="tab-subscribers" class="emmwt-tab-pane" style="display: none;">
+                <div class="emmwt-card">
+                    <h3><?php esc_html_e( 'Lead Capture (Email Subscribers)', 'easy-maintenance-timer' ); ?></h3>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Enable Subscription Form', 'easy-maintenance-timer' ); ?></th>
+                            <td>
+                                <label class="emmwt-toggle" for="emmwt_enable_subscribe">
+                                    <input type="checkbox" id="emmwt_enable_subscribe" name="emmwt_enable_subscribe" value="1" <?php checked( 1, get_option( 'emmwt_enable_subscribe', 0 ) ); ?> />
+                                    <span class="emmwt-slider"></span>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e2e4e7;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="margin: 0;"><?php esc_html_e( 'Subscribers List', 'easy-maintenance-timer' ); ?></h4>
+                        <?php if ( ! empty( $subscribers ) ) : ?>
+                            <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=emmwt_export_csv' ), 'emmwt_export_nonce' ) ); ?>" class="button button-primary">
+                                <span class="dashicons dashicons-download" style="vertical-align: middle; margin-top: -17px;"></span> 
+                                <span style="vertical-align: middle;"><?php esc_html_e( 'Export CSV', 'easy-maintenance-timer' ); ?></span>
+                            </a>
+                        <?php else : ?>
+                            <button type="button" class="button button-secondary" disabled>
+                                <span class="dashicons dashicons-download" style="vertical-align: middle; margin-top: -17px;"></span> 
+                                <span style="vertical-align: middle;"><?php esc_html_e( 'Export CSV', 'easy-maintenance-timer' ); ?></span>
+                            </button>
+                        <?php endif; ?>
+                    </div>
+
+                    <table class="wp-list-table widefat fixed striped">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;"><?php esc_html_e( 'ID', 'easy-maintenance-timer' ); ?></th>
+                                <th><?php esc_html_e( 'Email Address', 'easy-maintenance-timer' ); ?></th>
+                                <th><?php esc_html_e( 'Date Subscribed', 'easy-maintenance-timer' ); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ( ! empty( $subscribers ) ) : ?>
+                                <?php foreach ( $subscribers as $sub ) : ?>
+                                    <tr>
+                                        <td><?php echo esc_html( $sub->id ); ?></td>
+                                        <td><strong><?php echo esc_html( $sub->email ); ?></strong></td>
+                                        <td><?php echo esc_html( wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $sub->subscribed_at ) ) ); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else : ?>
+                                <tr>
+                                    <td colspan="3" style="text-align: center; padding: 20px;">
+                                        <?php esc_html_e( 'No subscribers yet.', 'easy-maintenance-timer' ); ?>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div id="tab-support" class="emmwt-tab-pane" style="display: none;">
-                
-                <!-- Existing Support Links Card -->
                 <div class="emmwt-card" style="border-left: 4px solid #2271b1; padding: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
                     <div style="flex: 1; min-width: 300px;">
                         <h3 style="margin-top: 0; font-size: 1.1em;"><?php esc_html_e( 'Need Help or Want to Contribute?', 'easy-maintenance-timer' ); ?></h3>
@@ -456,13 +478,9 @@ function emmwt_settings_page_callback() {
                     </div>
                 </div>
 
-                <!-- Support Ticket Form Card -->
                 <div class="emmwt-card">
                     <h3><?php esc_html_e( 'Submit a Support Ticket', 'easy-maintenance-timer' ); ?></h3>
-                    <p class="description"><?php esc_html_e( 'Found a bug or have a suggestion? Send us a message directly from here. We will reply to your WordPress admin email.', 'easy-maintenance-timer' ); ?></p>
-                    
                     <div id="emmwt-support-notice" style="display:none; padding:10px; margin: 15px 0; border-left:4px solid;"></div>
-
                     <table class="form-table">
                         <tr>
                             <th scope="row"><label for="emmwt_support_type"><?php esc_html_e( 'Type of Inquiry', 'easy-maintenance-timer' ); ?></label></th>
@@ -493,90 +511,28 @@ function emmwt_settings_page_callback() {
                     </table>
                     <?php wp_nonce_field( 'emmwt_support_nonce', 'emmwt_support_nonce_field' ); ?>
                 </div>
-
             </div>
 
-            <p class="submit">
-                <?php submit_button( '', 'primary', 'submit', false ); ?>
-            </p>
+            <!-- Premium Sticky Save Bar -->
+            <div class="emmwt-sticky-footer" style="position: sticky; bottom: 0; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(8px); border-top: 1px solid #c3c4c7; box-shadow: 0 -4px 20px rgba(0,0,0,0.06); padding: 15px 20px; margin: 30px -20px -20px -20px; z-index: 999; display: flex; justify-content: space-between; align-items: center;">
+                <div style="color: #646970; font-size: 13px;">
+                    <span class="dashicons dashicons-info" style="vertical-align: middle; margin-top: -3px; font-size: 18px;"></span>
+                    <span style="vertical-align: middle; margin-left: 5px;"><?php esc_html_e( 'Changes take effect immediately after saving.', 'easy-maintenance-timer' ); ?></span>
+                </div>
+                <div>
+                    <?php 
+                    submit_button( 
+                        __( 'Save All Changes', 'easy-maintenance-timer' ), 
+                        'primary', 
+                        'submit', 
+                        false, 
+                        array( 'style' => 'background: #2271b1; border: none; box-shadow: 0 4px 12px rgba(34,113,177,0.3); border-radius: 6px; padding: 0 35px; font-size: 15px; font-weight: 500; height: 42px; line-height: 42px; cursor: pointer; transition: all 0.3s ease;' ) 
+                    ); 
+                    ?>
+                </div>
+            </div>
+
         </form>
     </div>
     <?php
 }
-
-function emmwt_admin_settings_enqueue( $hook ) {
-    if ( 'settings_page_emmwt_settings' !== $hook ) return;
-
-    wp_enqueue_media();
-
-    // NEW: Load Native WP Color Picker
-    wp_enqueue_style( 'wp-color-picker' );
-    
-    wp_enqueue_style( 'flatpickr-css', EMMWT_PLUGIN_URL . 'assets/css/flatpickr.min.css', array(), '4.6.13' );
-    wp_enqueue_script( 'flatpickr-js', EMMWT_PLUGIN_URL . 'assets/js/flatpickr.min.js', array('jquery'), '4.6.13', true );
-    wp_enqueue_style( 'emmwt-admin-css', EMMWT_PLUGIN_URL . 'assets/css/admin.css', array(), EMMWT_VERSION );
-    
-    // NEW: Add 'wp-color-picker' as a dependency for our admin.js
-    wp_enqueue_script( 'emmwt-admin-settings-js', EMMWT_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'flatpickr-js', 'wp-color-picker' ), EMMWT_VERSION, true );
-    
-    // PCP FIX: External CDN scripts are not allowed. Download these and place them in assets/css and assets/js
-    wp_enqueue_style( 'flatpickr-css', EMMWT_PLUGIN_URL . 'assets/css/flatpickr.min.css', array(), '4.6.13' );
-    wp_enqueue_script( 'flatpickr-js', EMMWT_PLUGIN_URL . 'assets/js/flatpickr.min.js', array('jquery'), '4.6.13', true );
-    
-    wp_enqueue_style( 'emmwt-admin-css', EMMWT_PLUGIN_URL . 'assets/css/admin.css', array(), EMMWT_VERSION );
-    wp_enqueue_script( 'emmwt-admin-settings-js', EMMWT_PLUGIN_URL . 'assets/js/admin.js', array( 'jquery', 'flatpickr-js' ), EMMWT_VERSION, true );
-
-    wp_localize_script( 'emmwt-admin-settings-js', 'emmwt_admin', array(
-        'title_logo' => esc_html__( 'Select or Upload Logo', 'easy-maintenance-timer' ),
-        'title_bg'   => esc_html__( 'Select or Upload Background', 'easy-maintenance-timer' ),
-    ) );
-}
-add_action( 'admin_enqueue_scripts', 'emmwt_admin_settings_enqueue' );
-
-/**
- * AJAX Handler for Support Form
- * PCP Compliant: Nonce check, capabilities check, and sanitization applied.
- */
-function emmwt_handle_support_submission() {
-    // 1. Verify Nonce (Security Check)
-    check_ajax_referer( 'emmwt_support_nonce', 'security' );
-
-    // 2. Verify Permissions
-    if ( ! current_user_can( 'manage_options' ) ) {
-        wp_send_json_error( __( 'Unauthorized access.', 'easy-maintenance-timer' ) );
-    }
-
-    // 3. Sanitize Inputs
-    $type    = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
-    $message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
-
-    if ( empty( $message ) ) {
-        wp_send_json_error( __( 'Message field cannot be empty.', 'easy-maintenance-timer' ) );
-    }
-
-    // 4. Prepare Email Data
-    $current_user = wp_get_current_user();
-    $site_url     = site_url();
-    $to           = 'muhammed.qutubuddin786+plugin@gmail.com'; // Your email
-    $subject      = sprintf( '[Easy Maintenance Timer] %s from %s', $type, $site_url );
-    
-    $body  = "Type of Inquiry: $type\n";
-    $body .= "Website: $site_url\n";
-    $body .= "Sender Email: {$current_user->user_email}\n\n";
-    $body .= "Message:\n$message\n";
-    
-    $headers = array(
-        'Content-Type: text/plain; charset=UTF-8', 
-        'Reply-To: ' . $current_user->user_email
-    );
-
-    // 5. Send Email
-    $sent = wp_mail( $to, $subject, $body, $headers );
-
-    if ( $sent ) {
-        wp_send_json_success( __( 'Your message has been sent successfully! We will get back to you soon.', 'easy-maintenance-timer' ) );
-    } else {
-        wp_send_json_error( __( 'Failed to send message. Please check your server email configurations.', 'easy-maintenance-timer' ) );
-    }
-}
-add_action( 'wp_ajax_emmwt_submit_support', 'emmwt_handle_support_submission' );

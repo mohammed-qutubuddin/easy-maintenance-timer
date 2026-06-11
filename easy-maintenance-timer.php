@@ -2,7 +2,7 @@
 /*
 Plugin Name: Easy Maintenance Timer
 Description: Enable maintenance mode with countdown, custom logo, and message.
-Version: 1.02
+Version: 1.03
 Author: Abdul Nasir
 Text Domain: easy-maintenance-timer
 License: GPLv2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Define plugin constants for strict and efficient path referencing
 define( 'EMMWT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EMMWT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'EMMWT_VERSION', '1.02' );
+define( 'EMMWT_VERSION', '1.03' );
 
 /**
  * Include required files cleanly.
@@ -24,13 +24,19 @@ define( 'EMMWT_VERSION', '1.02' );
  * and avoid loading admin scripts on the frontend.
  */
 
-// Always load frontend logic since it handles the maintenance redirect check
-require_once EMMWT_PLUGIN_DIR . 'includes/frontend-maintenance.php';
+// 1. Core Handlers (Loaded everywhere for DB sync and AJAX actions)
+require_once EMMWT_PLUGIN_DIR . 'includes/db-handlers.php';
+require_once EMMWT_PLUGIN_DIR . 'includes/ajax-handlers.php';
 
-// Load admin settings and deactivation feedback strictly in the WordPress backend
+// 2. Conditional Loading for True Zero-Bloat
 if ( is_admin() ) {
+    // Load strictly in the WordPress backend
     require_once EMMWT_PLUGIN_DIR . 'includes/admin-settings.php';
     require_once EMMWT_PLUGIN_DIR . 'includes/deactivation-feedback.php';
+} else {
+    // Load strictly on the frontend (for Visitors and Live Preview)
+    require_once EMMWT_PLUGIN_DIR . 'includes/frontend-hooks.php';
+    require_once EMMWT_PLUGIN_DIR . 'includes/frontend-template.php';
 }
 
 /**
