@@ -1,11 +1,12 @@
 /**
  * Easy Maintenance Mode - Admin JS
  * Organized in a clean, modular structure.
+ * ES5 syntax used for maximum backward compatibility across older WP versions and browsers.
  */
 jQuery(document).ready(function ($) {
     'use strict';
 
-    const EMMWT_Admin = {
+    var EMMWT_Admin = {
 
         init: function () {
             this.initColorPicker();
@@ -20,20 +21,21 @@ jQuery(document).ready(function ($) {
 
         // 1. Native WP Color Picker
         initColorPicker: function () {
-            if ($('.emmwt-color-picker').length) {
+            // Safety check to ensure wpColorPicker is loaded
+            if ($.fn.wpColorPicker && $('.emmwt-color-picker').length) {
                 $('.emmwt-color-picker').wpColorPicker();
             }
         },
 
         // 2. Flatpickr Datepicker with Apply Button
         initDatePicker: function () {
-            if ($('#emmwt_datepicker').length) {
+            if (typeof flatpickr !== 'undefined' && $('#emmwt_datepicker').length) {
                 flatpickr('#emmwt_datepicker', {
                     enableTime: true,
                     dateFormat: "Y-m-d H:i",
                     minDate: "today",
                     onReady: function (selectedDates, dateStr, instance) {
-                        const btn = document.createElement("button");
+                        var btn = document.createElement("button");
                         btn.className = "button button-primary";
                         btn.style.cssText = "width: 100%; margin-top: 10px;";
                         btn.innerHTML = "OK / Apply";
@@ -48,12 +50,12 @@ jQuery(document).ready(function ($) {
 
         // 3. Dependent Fields Toggle
         initFieldToggles: function () {
-            const $chkEnabled = $('#emmwt_enabled');
-            const $chkSocial = $('#emmwt_enable_social');
+            var $chkEnabled = $('#emmwt_enabled');
+            var $chkSocial = $('#emmwt_enable_social');
 
             // General Enable/Disable Toggle
             if ($chkEnabled.length) {
-                const toggleFields = () => {
+                var toggleFields = function () {
                     $('.emmwt-dependent').prop('disabled', !$chkEnabled.is(':checked'));
                 };
                 $chkEnabled.on('change', toggleFields);
@@ -74,8 +76,8 @@ jQuery(document).ready(function ($) {
 
         // 4. WordPress Native Media Uploader
         initMediaUploader: function () {
-            const setupUploader = (btnSelector, inputSelector, customTitle) => {
-                let frame;
+            var setupUploader = function (btnSelector, inputSelector, customTitle) {
+                var frame;
                 $(btnSelector).on('click', function (e) {
                     e.preventDefault();
 
@@ -92,7 +94,7 @@ jQuery(document).ready(function ($) {
                     });
 
                     frame.on('select', function () {
-                        const attachment = frame.state().get('selection').first().toJSON();
+                        var attachment = frame.state().get('selection').first().toJSON();
                         $(inputSelector).val(attachment.url).trigger('change');
 
                         if (inputSelector === '#emmwt_logo_url') {
@@ -104,8 +106,8 @@ jQuery(document).ready(function ($) {
                 });
             };
 
-            const titleLogo = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_logo : 'Select Logo';
-            const titleBg = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_bg : 'Select Background Image';
+            var titleLogo = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_logo : 'Select Logo';
+            var titleBg = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_bg : 'Select Background Image';
 
             setupUploader('#emmwt_logo_upload', '#emmwt_logo_url', titleLogo);
             setupUploader('#emmwt_bg_upload', '#emmwt_bg_url', titleBg);
@@ -115,11 +117,11 @@ jQuery(document).ready(function ($) {
         initIPWhitelist: function () {
             $('#emmwt-add-my-ip').on('click', function (e) {
                 e.preventDefault();
-                const currentIp = $('#emmwt-current-ip').text().trim();
-                const $ipBox = $('textarea[name="emmwt_bypass_ips"]');
-                let existingIps = $ipBox.val().trim();
+                var currentIp = $('#emmwt-current-ip').text().trim();
+                var $ipBox = $('textarea[name="emmwt_bypass_ips"]');
+                var existingIps = $ipBox.val().trim();
                 
-                const ipArray = existingIps ? existingIps.split(/\r?\n/) : [];
+                var ipArray = existingIps ? existingIps.split(/\r?\n/) : [];
                 
                 if ($.inArray(currentIp, ipArray) === -1) {
                     $ipBox.val(existingIps === '' ? currentIp : existingIps + '\n' + currentIp);
@@ -137,13 +139,13 @@ jQuery(document).ready(function ($) {
                 $(this).addClass('nav-tab-active');
                 
                 $('.emmwt-tab-pane').hide();
-                const target = $(this).attr('href');
+                var target = $(this).attr('href');
                 $(target).show();
                 
                 localStorage.setItem('emmwt_active_tab', target);
             });
             
-            const activeTab = localStorage.getItem('emmwt_active_tab');
+            var activeTab = localStorage.getItem('emmwt_active_tab');
             if (activeTab && $(activeTab).length) {
                 $('.emmwt-nav-tabs .nav-tab[href="' + activeTab + '"]').click();
             }
@@ -154,12 +156,12 @@ jQuery(document).ready(function ($) {
             $('#emmwt_submit_support').on('click', function (e) {
                 e.preventDefault();
                 
-                const $btn = $(this);
-                const $spinner = $('#emmwt-support-spinner');
-                const $notice = $('#emmwt-support-notice');
-                const type = $('#emmwt_support_type').val();
-                const message = $('#emmwt_support_message').val().trim();
-                const nonce = $('#emmwt_support_nonce_field').val();
+                var $btn = $(this);
+                var $spinner = $('#emmwt-support-spinner');
+                var $notice = $('#emmwt-support-notice');
+                var type = $('#emmwt_support_type').val();
+                var message = $('#emmwt_support_message').val().trim();
+                var nonce = $('#emmwt_support_nonce_field').val();
                 
                 if (!message) {
                     $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> Please enter a message before sending.</p>')
@@ -173,7 +175,7 @@ jQuery(document).ready(function ($) {
                 $notice.slideUp();
 
                 $.ajax({
-                    url: ajaxurl,
+                    url: ajaxurl, // Native WordPress global var
                     type: 'POST',
                     data: {
                         action: 'emmwt_submit_support',
@@ -185,15 +187,21 @@ jQuery(document).ready(function ($) {
                         $btn.prop('disabled', false);
                         $spinner.removeClass('is-active');
                         
+                        // XSS Protection via text() instead of concatenation where possible, 
+                        // though WP sends safe JSON response.data
+                        var responseText = response.data ? response.data : 'Action completed.';
+
                         if (response.success) {
-                            $notice.html('<p style="color:#00a32a; margin:0;"><strong>Success:</strong> ' + response.data + '</p>')
-                                   .css({'border-color': '#00a32a', 'background': '#f3faef'})
-                                   .slideDown();
+                            $notice.html('<p style="color:#00a32a; margin:0;"><strong>Success:</strong> <span></span></p>')
+                                   .css({'border-color': '#00a32a', 'background': '#f3faef'});
+                            $notice.find('span').text(responseText);
+                            $notice.slideDown();
                             $('#emmwt_support_message').val('');
                         } else {
-                            $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> ' + response.data + '</p>')
-                                   .css({'border-color': '#d63638', 'background': '#fcf0f1'})
-                                   .slideDown();
+                            $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> <span></span></p>')
+                                   .css({'border-color': '#d63638', 'background': '#fcf0f1'});
+                            $notice.find('span').text(responseText);
+                            $notice.slideDown();
                         }
                     },
                     error: function () {
@@ -210,10 +218,10 @@ jQuery(document).ready(function ($) {
         // 8. Plugin Deactivation Modal
         initDeactivationModal: function () {
             if (typeof emmwt_deactivation_data !== 'undefined') {
-                let deactivationLink = '';
-                const pluginSlug = emmwt_deactivation_data.plugin_slug;
-                const ajaxUrl = emmwt_deactivation_data.ajax_url;
-                const nonce = emmwt_deactivation_data.nonce;
+                var deactivationLink = '';
+                var pluginSlug = emmwt_deactivation_data.plugin_slug;
+                var ajaxUrl = emmwt_deactivation_data.ajax_url;
+                var nonce = emmwt_deactivation_data.nonce;
 
                 $('#the-list').on('click', 'a[id*="deactivate-' + pluginSlug.split('/')[0] + '"]', function (e) {
                     e.preventDefault();
@@ -244,11 +252,11 @@ jQuery(document).ready(function ($) {
 
                 $('#emmwt-deactivate-form').on('submit', function (e) {
                     e.preventDefault();
-                    const submitBtn = $('#emmwt-submit-deactivate');
+                    var submitBtn = $('#emmwt-submit-deactivate');
                     submitBtn.text('Submitting...').prop('disabled', true);
 
-                    const reason = $('input[name="emmwt_reason"]:checked').val();
-                    const techDesc = $('#emmwt-tech-desc').val();
+                    var reason = $('input[name="emmwt_reason"]:checked').val();
+                    var techDesc = $('#emmwt-tech-desc').val();
 
                     $.ajax({
                         url: ajaxUrl,

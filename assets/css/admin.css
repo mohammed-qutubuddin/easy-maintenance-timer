@@ -1,10 +1,161 @@
+/**
+ * Easy Maintenance Mode - Admin UI Styles
+ * Optimized & Minified-Ready
+ */
+
+/* ==========================================================================
+   1. General Layout & Cards
+   ========================================================================== */
+.emmwt-wrap {
+    max-width: 1050px;
+    margin-top: 20px;
+}
+
+.emmwt-card {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 6px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.emmwt-card h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #f0f0f1;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.emmwt-tab-pane {
+    animation: emmwtFadeIn 0.3s ease;
+}
+
+@keyframes emmwtFadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   2. iOS Style Toggle Switches
+   ========================================================================== */
+.emmwt-toggle {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+.emmwt-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.emmwt-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .3s;
+    border-radius: 34px;
+}
+
+.emmwt-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .emmwt-slider {
+    background-color: #2271b1; /* WordPress Native Blue */
+}
+
+input:focus + .emmwt-slider {
+    box-shadow: 0 0 1px #2271b1;
+}
+
+input:checked + .emmwt-slider:before {
+    transform: translateX(22px);
+}
+
+.emmwt-toggle-label {
+    margin-left: 10px;
+    vertical-align: middle;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   3. Forms & Tables
+   ========================================================================== */
+.emmwt-card .form-table th {
+    font-weight: 600;
+    width: 250px;
+}
+
+.emmwt-card input.regular-text,
+.emmwt-card input[type="text"], 
+.emmwt-card input[type="email"], 
+.emmwt-card input[type="url"], 
+.emmwt-card select, 
+.emmwt-card textarea {
+    width: 100%;
+    max-width: 400px;
+}
+
+.emmwt-logo-preview {
+    display: block;
+    max-width: 150px;
+    max-height: 80px;
+    margin-top: 15px;
+    border: 1px dashed #ccc;
+    padding: 5px;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+/* Fix Flatpickr UI clashing with WordPress Admin CSS */
+.flatpickr-calendar .flatpickr-current-month {
+    padding-top: 5px !important;
+}
+
+.flatpickr-calendar .flatpickr-current-month select.flatpickr-monthDropdown-months,
+.flatpickr-calendar .flatpickr-current-month input.cur-year {
+    font-size: 15px !important;
+    padding: 0 !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+    line-height: inherit !important;
+    background: transparent !important;
+}
+
+.flatpickr-calendar .flatpickr-current-month .numInputWrapper {
+    width: 6ch !important;
+}
+
+/* ==========================================================================
+   4. Deactivation Modal
+   ========================================================================== */
 #emmwt-deactivate-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 99999;
-    align-items: center;
+    z-index: 999999;
+    display: none; /* Flex applied via JS */
     justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(3px);
 }
 
 #emmwt-deactivate-modal {
@@ -12,15 +163,22 @@
     padding: 30px;
     width: 100%;
     max-width: 550px;
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    animation: emmwtModalIn 0.3s ease;
+}
+
+@keyframes emmwtModalIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 #emmwt-deactivate-modal h3 {
     margin-top: 0;
     font-size: 16px;
     font-weight: 600;
+    line-height: 1.4;
     margin-bottom: 20px;
 }
 
@@ -28,13 +186,14 @@
     margin-bottom: 12px;
     display: flex;
     align-items: center;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 .emmwt-reason-option input[type="radio"] {
-    margin-right: 10px;
+    margin-right: 10px !important;
 }
 
-/* New Textarea Styles */
 #emmwt-tech-details-wrapper {
     margin: 5px 0 15px 25px;
 }
@@ -46,153 +205,62 @@
     border: 1px solid #ccd0d4;
     padding: 8px;
     font-family: inherit;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+    font-size: 13px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.07);
 }
 
 .emmwt-modal-footer {
     margin-top: 25px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
 }
 
 .emmwt-btn-submit {
-    background: #3b5998; 
+    background: #2271b1; 
     color: #fff;
     border: none;
-    padding: 10px 20px;
-    border-radius: 3px;
+    padding: 8px 16px;
+    border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     text-decoration: none;
+    transition: background 0.2s ease;
 }
 
 .emmwt-btn-submit:hover {
-    background: #2d4373;
+    background: #135e96;
     color: #fff;
 }
 
 .emmwt-btn-skip {
-    background: transparent;
-    color: #3b5998;
-    border: 1px solid #3b5998;
-    padding: 9px 19px;
-    border-radius: 3px;
+    background: #f0f0f1;
+    color: #2c3338;
+    border: 1px solid #8c8f94;
+    padding: 7px 15px;
+    border-radius: 4px;
     cursor: pointer;
     font-weight: 600;
     text-decoration: none;
+    transition: all 0.2s ease;
 }
 
 .emmwt-btn-skip:hover {
-    background: #f0f4f8;
-    color: #3b5998;
+    background: #f6f7f7;
+    color: #2c3338;
 }
 
 .emmwt-btn-cancel {
     margin-left: auto;
-    color: #3b5998;
+    color: #d63638;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.emmwt-btn-cancel:hover {
+    color: #d63638;
     text-decoration: underline;
-    cursor: pointer;
-}
-
-/* Modern Plugin UI Styles */
-.emmwt-wrap {
-    max-width: 800px;
-    margin-top: 20px;
-}
-.emmwt-card {
-    background: #fff;
-    border: 1px solid #ccd0d4;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    padding: 30px;
-    margin-top: 15px;
-}
-.emmwt-card h2 {
-    margin-top: 0;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #f0f0f1;
-    margin-bottom: 25px;
-}
-/* CSS Toggle Switch */
-.emmwt-toggle {
-    position: relative;
-    display: inline-block;
-    width: 46px;
-    height: 24px;
-    vertical-align: middle;
-}
-.emmwt-toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.emmwt-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 24px;
-}
-.emmwt-slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-input:checked + .emmwt-slider {
-    background-color: #2271b1; /* WP Blue */
-}
-input:checked + .emmwt-slider:before {
-    transform: translateX(22px);
-}
-.emmwt-toggle-label {
-    margin-left: 10px;
-    vertical-align: middle;
-    font-weight: 600;
-}
-/* Improve input spacing */
-.emmwt-card .form-table th {
-    width: 250px;
-    font-weight: 600;
-}
-.emmwt-card input.regular-text,
-.emmwt-card input[type="text"], 
-.emmwt-card input[type="email"],
-.emmwt-card input[type="url"],
-.emmwt-card input[type="datetime-local"] {
-    width: 100%;
-    max-width: 400px;
-}
-.emmwt-logo-preview {
-    margin-top: 10px;
-    max-width: 120px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 4px;
-    display: block;
-}
-
-/* Fix Flatpickr UI clashing with WordPress Admin CSS */
-.flatpickr-calendar .flatpickr-current-month {
-    padding-top: 5px !important;
-}
-.flatpickr-calendar .flatpickr-current-month select.flatpickr-monthDropdown-months,
-.flatpickr-calendar .flatpickr-current-month input.cur-year {
-    font-size: 15px !important;
-    padding: 0 !important;
-    height: auto !important;
-    box-shadow: none !important;
-    border: none !important;
-    line-height: inherit !important;
-    background: transparent !important;
-}
-.flatpickr-calendar .flatpickr-current-month .numInputWrapper {
-    width: 6ch !important;
 }

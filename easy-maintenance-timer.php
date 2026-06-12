@@ -1,16 +1,18 @@
 <?php
-/*
-Plugin Name: Easy Maintenance Timer
-Description: Enable maintenance mode with countdown, custom logo, and message.
-Version: 1.03
-Author: Abdul Nasir
-Text Domain: easy-maintenance-timer
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+/**
+* Plugin Name: Easy Maintenance Timer
+* Description: Enable maintenance mode with countdown, custom logo, and message.
+* Version: 1.03
+* Requires at least: 5.2
+* Requires PHP: 5.6
+* Author: Abdul Nasir
+* Text Domain: easy-maintenance-timer
+* License: GPLv2 or later
+* License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
-    exit; 
+    exit; // Exit if accessed directly
 }
 
 // Define plugin constants for strict and efficient path referencing
@@ -38,6 +40,18 @@ if ( is_admin() ) {
     require_once EMMWT_PLUGIN_DIR . 'includes/frontend-hooks.php';
     require_once EMMWT_PLUGIN_DIR . 'includes/frontend-template.php';
 }
+
+/**
+ * Plugin Activation Hook
+ * PCP Standard: Database tables should be created on activation, not on admin_init.
+ */
+function emmwt_activate_plugin() {
+    // Calling the function from db-handlers.php
+    if ( function_exists( 'emmwt_create_subscribers_table' ) ) {
+        emmwt_create_subscribers_table();
+    }
+}
+register_activation_hook( __FILE__, 'emmwt_activate_plugin' );
 
 /**
  * Load plugin textdomain for translations.

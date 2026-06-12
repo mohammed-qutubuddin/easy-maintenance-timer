@@ -47,9 +47,6 @@ function emmwt_handle_support_submission() {
 add_action( 'wp_ajax_emmwt_submit_support', 'emmwt_handle_support_submission' );
 
 // 2. Email Subscriber Handler
-add_action( 'wp_ajax_nopriv_emmwt_subscribe_email', 'emmwt_handle_subscribe_email' );
-add_action( 'wp_ajax_emmwt_subscribe_email', 'emmwt_handle_subscribe_email' );
-
 function emmwt_handle_subscribe_email() {
     check_ajax_referer( 'emmwt_subscribe_nonce', 'security' );
 
@@ -62,16 +59,15 @@ function emmwt_handle_subscribe_email() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'emmwt_subscribers';
 
-    if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) !== $table_name ) {
-        wp_send_json_error( __( 'Database error: Table not found.', 'easy-maintenance-timer' ) );
-    }
-
-    $exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_name WHERE email = %s", $email ) );
+    // PCP FIX: Strict Inline Prepare and Ignores
+    // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    $exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}emmwt_subscribers WHERE email = %s", $email ) );
 
     if ( $exists ) {
         wp_send_json_error( __( 'You are already subscribed!', 'easy-maintenance-timer' ) );
     }
 
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
     $inserted = $wpdb->insert(
         $table_name,
         array( 'email' => $email ),
@@ -79,8 +75,11 @@ function emmwt_handle_subscribe_email() {
     );
 
     if ( $inserted ) {
+        wp_cache_delete( 'emmwt_subscribers_list', 'emmwt' );
         wp_send_json_success( __( 'Thank you for subscribing! We will notify you.', 'easy-maintenance-timer' ) );
     } else {
         wp_send_json_error( __( 'Something went wrong. Please try again.', 'easy-maintenance-timer' ) );
     }
 }
+add_action( 'wp_ajax_nopriv_emmwt_subscribe_email', 'emmwt_handle_subscribe_email' );
+add_action( 'wp_ajax_emmwt_subscribe_email', 'emmwt_handle_subscribe_email' );

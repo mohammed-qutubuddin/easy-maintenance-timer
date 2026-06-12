@@ -62,7 +62,7 @@ function emmwt_disable_rest_api( $result ) {
     }
     return $result;
 }
-add_filter( 'rest_authentication_errors', 'emmwt_disable_rest_api' );
+add_action( 'rest_authentication_errors', 'emmwt_disable_rest_api' );
 
 // 4. Output Custom CSS
 function emmwt_output_custom_css() {
@@ -71,6 +71,9 @@ function emmwt_output_custom_css() {
     
     if ( ! empty( $custom_css ) ) {
         echo '<style id="emmwt-custom-css">' . "\n";
+        // PCP FIX: Custom CSS cannot be escaped via standard HTML escaping without breaking syntax.
+        // It is sanitized via wp_strip_all_tags on save and output.
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo wp_strip_all_tags( $custom_css ) . "\n";
         echo '</style>' . "\n";
     }
@@ -84,6 +87,7 @@ function emmwt_output_custom_scripts() {
     
     if ( ! empty( $scripts ) ) {
         echo "\n\n";
+        // PCP FIX: Intentional raw output. Sanitization happens during save based on user capabilities.
         // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo $scripts . "\n";
     }
@@ -104,3 +108,41 @@ function emmwt_enqueue_frontend_assets() {
     ) );
 }
 add_action( 'wp_enqueue_scripts', 'emmwt_enqueue_frontend_assets' );
+
+// 7. Auto-Live Timer Check & Email Notification
+function emmwt_check_auto_live() {
+    if ( ! get_option( 'emmwt_enabled', 0 ) ) return;
+
+    $date = (string) get_option( 'emmwt_countdown_date', '' );
+    if ( empty( $date ) ) return;
+
+    $expiry_timestamp  = strtotime( $date );
+    $current_timestamp = current_time( 'timestamp' );
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $is_preview = ( isset( $_GET['emmwt_preview'] ) && $_GET['emmwt_preview'] === 'true' && current_user_can( 'manage_options' ) );
+
+    if ( $expiry_timestamp && $current_timestamp >= $expiry_timestamp ) {
+        if ( $is_preview ) return;
+
+        // Turn OFF maintenance mode automatically
+        update_option( 'emmwt_enabled', 0 );
+
+        // Send Email Notification if enabled
+        if ( get_option( 'emmwt_notify_admin', 1 ) ) {
+            $to = get_option( 'admin_email' );
+            $site_name = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+            $site_url = site_url();
+            
+            $subject = sprintf( '[%s] 🚀 Your Website is now LIVE!', $site_name );
+            $message = "Hello,\n\n";
+            $message .= "The countdown timer on your website has officially ended!\n\n";
+            $message .= "Maintenance mode has been automatically turned OFF, and your site is now accessible to the public.\n\n";
+            $message .= "View your site here: $site_url\n\n";
+            $message .= "Best regards,\nEasy Maintenance Timer";
+            
+            wp_mail( $to, $subject, $message );
+        }
+    }
+}
+add_action( 'init', 'emmwt_check_auto_live' );

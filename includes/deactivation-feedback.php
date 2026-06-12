@@ -61,13 +61,11 @@ function emmwt_deactivation_popup_html() {
                     <?php esc_html_e( 'I switched to another plugin', 'easy-maintenance-timer' ); ?>
                 </label>
                 
-                <!-- Technical Issue Option -->
                 <label class="emmwt-reason-option">
                     <input type="radio" name="emmwt_reason" value="Technical Issue" id="emmwt-reason-technical">
                     <?php esc_html_e( 'Technical Issue', 'easy-maintenance-timer' ); ?>
                 </label>
                 
-                <!-- Hidden Details Box for Technical Issues -->
                 <div id="emmwt-tech-details-wrapper" style="display: none;">
                     <textarea id="emmwt-tech-desc" name="emmwt_tech_desc" rows="3" placeholder="<?php esc_attr_e( 'Could you describe the issue? Any suggestions help us improve!', 'easy-maintenance-timer' ); ?>"></textarea>
                 </div>
@@ -93,15 +91,19 @@ add_action( 'admin_footer', 'emmwt_deactivation_popup_html' );
  * Handle the AJAX request and send the email.
  */
 function emmwt_handle_deactivation_feedback() {
+    // 1. Verify Nonce
     check_ajax_referer( 'emmwt_deactivation_nonce', 'security' );
 
-    // Sanitize basic reason
+    // 2. Verify Capabilities (PCP Fix)
+    if ( ! current_user_can( 'activate_plugins' ) ) {
+        wp_send_json_error( __( 'Unauthorized action.', 'easy-maintenance-timer' ) );
+    }
+
+    // 3. Sanitize Inputs
     $reason = isset( $_POST['reason'] ) ? sanitize_text_field( wp_unslash( $_POST['reason'] ) ) : 'No reason provided';
-    
-    // Sanitize the new technical description (allowing multiple lines)
     $tech_desc = isset( $_POST['tech_desc'] ) ? sanitize_textarea_field( wp_unslash( $_POST['tech_desc'] ) ) : '';
 
-    // Configure Email
+    // 4. Configure Email
     $to      = 'muhammed.qutubuddin786+plugin@gmail.com';
     $subject = 'Plugin Deactivation Feedback: Easy Maintenance Timer';
     $message = "A user has deactivated Easy Maintenance Timer on their site.\n\n";
@@ -115,9 +117,11 @@ function emmwt_handle_deactivation_feedback() {
 
     $headers = array('Content-Type: text/plain; charset=UTF-8');
 
-    // Send the email
-    wp_mail( $to, $subject, $message, $headers );
-
-    wp_send_json_success();
+    // 5. Send Email and Respond
+    if ( wp_mail( $to, $subject, $message, $headers ) ) {
+        wp_send_json_success();
+    } else {
+        wp_send_json_error( __( 'Failed to send feedback.', 'easy-maintenance-timer' ) );
+    }
 }
 add_action( 'wp_ajax_emmwt_submit_deactivation_reason', 'emmwt_handle_deactivation_feedback' );
