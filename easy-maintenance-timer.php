@@ -3,8 +3,8 @@
 * Plugin Name: Easy Maintenance Timer
 * Description: Enable maintenance mode with countdown, custom logo, and message.
 * Version: 1.03
-* Requires at least: 5.2
-* Requires PHP: 5.6
+* Requires at least: 6.0
+* Requires PHP: 7.4
 * Author: Abdul Nasir
 * Text Domain: easy-maintenance-timer
 * License: GPLv2 or later

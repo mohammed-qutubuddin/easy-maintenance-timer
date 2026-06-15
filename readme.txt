@@ -1,9 +1,9 @@
 === Easy Maintenance Timer ===
 Contributors: abdulnasir1995
 Tags: maintenance mode, coming soon, under construction, elementor, woocommerce
-Requires at least: 5.2
+Requires at least: 6.0
 Tested up to: 7.0
-Requires PHP: 5.6
+Requires PHP: 7.4
 Stable tag: 1.03
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
