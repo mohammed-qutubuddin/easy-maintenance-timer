@@ -1,156 +1,282 @@
+/**
+ * Easy Maintenance Mode - Admin JS
+ * Organized in a clean, modular structure.
+ * ES5 syntax used for maximum backward compatibility across older WP versions and browsers.
+ */
 jQuery(document).ready(function ($) {
     'use strict';
 
-    // --- Initialize Flatpickr Custom Datepicker ---
-    if ($('#emmwt_datepicker').length) {
-        flatpickr('#emmwt_datepicker', {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            minDate: "today",
-            // This line adds the OK/Apply button functionality you requested
-            onReady: function(selectedDates, dateStr, instance) {
-                const btn = document.createElement("button");
-                btn.className = "button button-primary";
-                btn.style.width = "100%";
-                btn.style.marginTop = "10px";
-                btn.innerHTML = "OK / Apply";
-                btn.onclick = function () {
-                    instance.close();
+    var EMMWT_Admin = {
+
+        init: function () {
+            this.initColorPicker();
+            this.initDatePicker();
+            this.initFieldToggles();
+            this.initMediaUploader();
+            this.initIPWhitelist();
+            this.initTabs();
+            this.initSupportForm();
+            this.initDeactivationModal();
+        },
+
+        // 1. Native WP Color Picker
+        initColorPicker: function () {
+            // Safety check to ensure wpColorPicker is loaded
+            if ($.fn.wpColorPicker && $('.emmwt-color-picker').length) {
+                $('.emmwt-color-picker').wpColorPicker();
+            }
+        },
+
+        // 2. Flatpickr Datepicker with Apply Button
+        initDatePicker: function () {
+            if (typeof flatpickr !== 'undefined' && $('#emmwt_datepicker').length) {
+                flatpickr('#emmwt_datepicker', {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                    minDate: "today",
+                    onReady: function (selectedDates, dateStr, instance) {
+                        var btn = document.createElement("button");
+                        btn.className = "button button-primary";
+                        btn.style.cssText = "width: 100%; margin-top: 10px;";
+                        btn.innerHTML = "OK / Apply";
+                        btn.onclick = function () {
+                            instance.close();
+                        };
+                        instance.calendarContainer.appendChild(btn);
+                    }
+                });
+            }
+        },
+
+        // 3. Dependent Fields Toggle
+        initFieldToggles: function () {
+            var $chkEnabled = $('#emmwt_enabled');
+            var $chkSocial = $('#emmwt_enable_social');
+
+            // General Enable/Disable Toggle
+            if ($chkEnabled.length) {
+                var toggleFields = function () {
+                    $('.emmwt-dependent').prop('disabled', !$chkEnabled.is(':checked'));
                 };
-                instance.calendarContainer.appendChild(btn);
-            }
-        });
-    }
-
-    // --- 1. Toggle Dependent Fields in Settings ---
-    var $chk = $('#emmwt_enabled');
-    if ($chk.length) {
-        function toggleFields() {
-            $('.emmwt-dependent').prop('disabled', !$chk.is(':checked'));
-        }
-        $chk.on('change', toggleFields);
-        toggleFields(); // run on load
-    }
-
-    // --- NEW: Toggle Social Fields ---
-    $('#emmwt_enable_social').on('change', function() {
-        if ($(this).is(':checked')) {
-            $('#emmwt-social-wrapper').slideDown('fast');
-        } else {
-            $('#emmwt-social-wrapper').slideUp('fast');
-        }
-    });
-
-    // --- 2. WordPress Media Uploader Logic ---
-    function setupMediaUploader(buttonSelector, inputSelector, customTitle) {
-        var frame; // FIX: Scoped locally so each button gets its own unique uploader instance
-        
-        $(buttonSelector).on('click', function (e) {
-            e.preventDefault();
-
-            // If the uploader object has already been created for this specific button, reopen it
-            if (frame) {
-                frame.open();
-                return;
+                $chkEnabled.on('change', toggleFields);
+                toggleFields(); // Initial run
             }
 
-            // Fallback title in case localization isn't loaded
-            var frameTitle = customTitle || 'Select Media';
+            // Social Icons Toggle
+            if ($chkSocial.length) {
+                $chkSocial.on('change', function () {
+                    if ($(this).is(':checked')) {
+                        $('#emmwt-social-wrapper').slideDown('fast');
+                    } else {
+                        $('#emmwt-social-wrapper').slideUp('fast');
+                    }
+                });
+            }
+        },
 
-            // Create the wp.media object
-            frame = wp.media({
-                title: frameTitle,
-                button: {
-                    text: 'Use this media'
-                },
-                multiple: false,
-                library: { type: 'image' }
-            });
+        // 4. WordPress Native Media Uploader
+        initMediaUploader: function () {
+            var setupUploader = function (btnSelector, inputSelector, customTitle) {
+                var frame;
+                $(btnSelector).on('click', function (e) {
+                    e.preventDefault();
 
-            // When a file is selected, grab the URL and set it as the text field's value
-            frame.on('select', function () {
-                var attachment = frame.state().get('selection').first().toJSON();
-                $(inputSelector).val(attachment.url).trigger('change');
+                    if (frame) {
+                        frame.open();
+                        return;
+                    }
 
-                // If it's the logo field, update the preview image in real-time
-                if (inputSelector === '#emmwt_logo_url') {
-                    $('.emmwt-logo-preview').attr('src', attachment.url).show();
+                    frame = wp.media({
+                        title: customTitle || 'Select Media',
+                        button: { text: 'Use this media' },
+                        multiple: false,
+                        library: { type: 'image' }
+                    });
+
+                    frame.on('select', function () {
+                        var attachment = frame.state().get('selection').first().toJSON();
+                        $(inputSelector).val(attachment.url).trigger('change');
+
+                        if (inputSelector === '#emmwt_logo_url') {
+                            $('.emmwt-logo-preview').attr('src', attachment.url).show();
+                        }
+                    });
+
+                    frame.open();
+                });
+            };
+
+            var titleLogo = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_logo : 'Select Logo';
+            var titleBg = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_bg : 'Select Background Image';
+
+            setupUploader('#emmwt_logo_upload', '#emmwt_logo_url', titleLogo);
+            setupUploader('#emmwt_bg_upload', '#emmwt_bg_url', titleBg);
+        },
+
+        // 5. Add Current IP to Whitelist
+        initIPWhitelist: function () {
+            $('#emmwt-add-my-ip').on('click', function (e) {
+                e.preventDefault();
+                var currentIp = $('#emmwt-current-ip').text().trim();
+                var $ipBox = $('textarea[name="emmwt_bypass_ips"]');
+                var existingIps = $ipBox.val().trim();
+                
+                var ipArray = existingIps ? existingIps.split(/\r?\n/) : [];
+                
+                if ($.inArray(currentIp, ipArray) === -1) {
+                    $ipBox.val(existingIps === '' ? currentIp : existingIps + '\n' + currentIp);
+                    $(this).text('Added!').prop('disabled', true);
                 }
             });
+        },
 
-            frame.open();
-        });
-    }
-
-    // Initialize media uploaders
-    var titleLogo = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_logo : 'Select Logo';
-    var titleBg   = (typeof emmwt_admin !== 'undefined') ? emmwt_admin.title_bg : 'Select Background Image';
-    
-    setupMediaUploader('#emmwt_logo_upload', '#emmwt_logo_url', titleLogo);
-    setupMediaUploader('#emmwt_bg_upload', '#emmwt_bg_url', titleBg);
-
-    // --- 3. Deactivation Feedback Modal Logic ---
-    if (typeof emmwt_deactivation_data !== 'undefined') {
-        var deactivationLink = '';
-        var pluginSlug = emmwt_deactivation_data.plugin_slug;
-        var ajaxUrl    = emmwt_deactivation_data.ajax_url;
-        var nonce      = emmwt_deactivation_data.nonce;
-
-        // Intercept the specific plugin's deactivate link
-        $('#the-list').on('click', 'a[id*="deactivate-' + pluginSlug.split('/')[0] + '"]', function (e) {
-            e.preventDefault();
-            deactivationLink = $(this).attr('href');
-            $('#emmwt-deactivate-overlay').css('display', 'flex');
-        });
-
-        // Close modal / Cancel
-        $('#emmwt-cancel-deactivate, #emmwt-deactivate-overlay').on('click', function (e) {
-            if (e.target === this) {
-                $('#emmwt-deactivate-overlay').hide();
+        // 6. Tabs Switcher Logic (With LocalStorage)
+        initTabs: function () {
+            $('.emmwt-nav-tabs .nav-tab').on('click', function (e) {
+                e.preventDefault();
+                
+                $('.emmwt-nav-tabs .nav-tab').removeClass('nav-tab-active');
+                $(this).addClass('nav-tab-active');
+                
+                $('.emmwt-tab-pane').hide();
+                var target = $(this).attr('href');
+                $(target).show();
+                
+                localStorage.setItem('emmwt_active_tab', target);
+            });
+            
+            var activeTab = localStorage.getItem('emmwt_active_tab');
+            if (activeTab && $(activeTab).length) {
+                $('.emmwt-nav-tabs .nav-tab[href="' + activeTab + '"]').click();
             }
-        });
+        },
 
-        // Only Deactivate (Skip feedback)
-        $('#emmwt-only-deactivate').on('click', function (e) {
-            e.preventDefault();
-            window.location.href = deactivationLink;
-        });
+        // 7. Support Ticket AJAX Form
+        initSupportForm: function () {
+            $('#emmwt_submit_support').on('click', function (e) {
+                e.preventDefault();
+                
+                var $btn = $(this);
+                var $spinner = $('#emmwt-support-spinner');
+                var $notice = $('#emmwt-support-notice');
+                var type = $('#emmwt_support_type').val();
+                var message = $('#emmwt_support_message').val().trim();
+                var nonce = $('#emmwt_support_nonce_field').val();
+                
+                if (!message) {
+                    $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> Please enter a message before sending.</p>')
+                           .css({'border-color': '#d63638', 'background': '#fcf0f1'})
+                           .slideDown();
+                    return;
+                }
 
-        // Show/Hide Technical Issue Textarea
-        $('input[name="emmwt_reason"]').on('change', function () {
-            if ($(this).val() === 'Technical Issue') {
-                $('#emmwt-tech-details-wrapper').slideDown('fast');
-                $('#emmwt-tech-desc').focus();
-            } else {
-                $('#emmwt-tech-details-wrapper').slideUp('fast');
-                $('#emmwt-tech-desc').val(''); // Clear the textarea if they select something else
-            }
-        });
+                $btn.prop('disabled', true);
+                $spinner.addClass('is-active');
+                $notice.slideUp();
 
-        // Submit & Deactivate
-        $('#emmwt-deactivate-form').on('submit', function (e) {
-            e.preventDefault();
+                $.ajax({
+                    url: ajaxurl, // Native WordPress global var
+                    type: 'POST',
+                    data: {
+                        action: 'emmwt_submit_support',
+                        security: nonce,
+                        type: type,
+                        message: message
+                    },
+                    success: function (response) {
+                        $btn.prop('disabled', false);
+                        $spinner.removeClass('is-active');
+                        
+                        // XSS Protection via text() instead of concatenation where possible, 
+                        // though WP sends safe JSON response.data
+                        var responseText = response.data ? response.data : 'Action completed.';
 
-            var submitBtn = $('#emmwt-submit-deactivate');
-            submitBtn.text('Submitting...').prop('disabled', true);
+                        if (response.success) {
+                            $notice.html('<p style="color:#00a32a; margin:0;"><strong>Success:</strong> <span></span></p>')
+                                   .css({'border-color': '#00a32a', 'background': '#f3faef'});
+                            $notice.find('span').text(responseText);
+                            $notice.slideDown();
+                            $('#emmwt_support_message').val('');
+                        } else {
+                            $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> <span></span></p>')
+                                   .css({'border-color': '#d63638', 'background': '#fcf0f1'});
+                            $notice.find('span').text(responseText);
+                            $notice.slideDown();
+                        }
+                    },
+                    error: function () {
+                        $btn.prop('disabled', false);
+                        $spinner.removeClass('is-active');
+                        $notice.html('<p style="color:#d63638; margin:0;"><strong>Error:</strong> An unexpected server error occurred.</p>')
+                               .css({'border-color': '#d63638', 'background': '#fcf0f1'})
+                               .slideDown();
+                    }
+                });
+            });
+        },
 
-            var reason = $('input[name="emmwt_reason"]:checked').val();
-            var techDesc = $('#emmwt-tech-desc').val();
+        // 8. Plugin Deactivation Modal
+        initDeactivationModal: function () {
+            if (typeof emmwt_deactivation_data !== 'undefined') {
+                var deactivationLink = '';
+                var pluginSlug = emmwt_deactivation_data.plugin_slug;
+                var ajaxUrl = emmwt_deactivation_data.ajax_url;
+                var nonce = emmwt_deactivation_data.nonce;
 
-            $.ajax({
-                url: ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'emmwt_submit_deactivation_reason',
-                    reason: reason,
-                    tech_desc: techDesc,
-                    security: nonce
-                },
-                complete: function () {
-                    // Regardless of email success/fail, deactivate the plugin
+                $('#the-list').on('click', 'a[id*="deactivate-' + pluginSlug.split('/')[0] + '"]', function (e) {
+                    e.preventDefault();
+                    deactivationLink = $(this).attr('href');
+                    $('#emmwt-deactivate-overlay').css('display', 'flex');
+                });
+
+                $('#emmwt-cancel-deactivate, #emmwt-deactivate-overlay').on('click', function (e) {
+                    if (e.target === this) {
+                        $('#emmwt-deactivate-overlay').hide();
+                    }
+                });
+
+                $('#emmwt-only-deactivate').on('click', function (e) {
+                    e.preventDefault();
                     window.location.href = deactivationLink;
-                }
-            });
-        });
-    }
+                });
+
+                $('input[name="emmwt_reason"]').on('change', function () {
+                    if ($(this).val() === 'Technical Issue') {
+                        $('#emmwt-tech-details-wrapper').slideDown('fast');
+                        $('#emmwt-tech-desc').focus();
+                    } else {
+                        $('#emmwt-tech-details-wrapper').slideUp('fast');
+                        $('#emmwt-tech-desc').val('');
+                    }
+                });
+
+                $('#emmwt-deactivate-form').on('submit', function (e) {
+                    e.preventDefault();
+                    var submitBtn = $('#emmwt-submit-deactivate');
+                    submitBtn.text('Submitting...').prop('disabled', true);
+
+                    var reason = $('input[name="emmwt_reason"]:checked').val();
+                    var techDesc = $('#emmwt-tech-desc').val();
+
+                    $.ajax({
+                        url: ajaxUrl,
+                        type: 'POST',
+                        data: {
+                            action: 'emmwt_submit_deactivation_reason',
+                            reason: reason,
+                            tech_desc: techDesc,
+                            security: nonce
+                        },
+                        complete: function () {
+                            window.location.href = deactivationLink;
+                        }
+                    });
+                });
+            }
+        }
+    };
+
+    // Boot the admin scripts
+    EMMWT_Admin.init();
+
 });
