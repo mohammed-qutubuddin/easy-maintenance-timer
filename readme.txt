@@ -1,6 +1,6 @@
 === Easy Maintenance Timer ===
 Contributors: abdulnasir1995
-Tags: maintenance mode, coming soon, under construction, elementor, woocommerce, coming soon page, landing page, seo friendly
+Tags: Tags: maintenance mode, coming soon, under construction, elementor, woocommerce
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
@@ -8,7 +8,7 @@ Stable tag: 1.03
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Fast, zero-bloat maintenance mode plugin with a countdown timer, 503 SEO headers, pure CSS animations, lead capture, and WooCommerce & Elementor compatibility.
+Zero-bloat maintenance mode with a countdown timer, 503 SEO headers, CSS animations, lead capture, and Elementor/WooCommerce compatibility.
 
 == Description ==
 
