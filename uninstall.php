@@ -69,6 +69,10 @@ if ( get_option( 'emmwt_delete_on_uninstall', 0 ) ) {
         'emmwt_og_title',
         'emmwt_og_desc',
         'emmwt_og_image',
+        'emmwt_enable_credit',
+        'emmwt_review_dismissed',
+        'emmwt_review_snooze_until',
+        'emmwt_installed_time',
         'emmwt_delete_on_uninstall'
     );
 

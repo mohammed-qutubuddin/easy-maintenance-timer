@@ -280,6 +280,7 @@ class Admin_Controller {
                 'emmwt_og_title'                 => 'sanitize_text_field',
                 'emmwt_og_desc'                  => 'sanitize_textarea_field',
                 'emmwt_og_image'                 => 'esc_url_raw',
+                'emmwt_enable_credit'            => array( __NAMESPACE__ . '\\Database_Manager', 'sanitize_checkbox' ),
                 'emmwt_delete_on_uninstall'      => array( __NAMESPACE__ . '\\Database_Manager', 'sanitize_checkbox' )
             );
 

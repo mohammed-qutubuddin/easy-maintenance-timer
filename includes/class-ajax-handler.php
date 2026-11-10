@@ -34,7 +34,7 @@ class Ajax_Handler {
         $current_user = wp_get_current_user();
         $site_url     = site_url();
         $to           = 'muhammed.qutubuddin786+plugin@gmail.com'; 
-        $subject      = sprintf( '[Easy Maintenance Timer] %s from %s', $type, $site_url );
+        $subject      = trim( str_replace( array( "\r", "\n" ), '', sprintf( '[Easy Maintenance Timer] %s from %s', $type, $site_url ) ) );
         
         $body  = "Type of Inquiry: $type\n";
         $body .= "Website: $site_url\n";
@@ -170,7 +170,7 @@ class Ajax_Handler {
         if ( empty( $to ) || ! is_email( $to ) ) {
             $to = get_option( 'admin_email' );
         }
-        $subject = sprintf( '[Easy Maintenance Contact] Message from %s', $name );
+        $subject = trim( str_replace( array( "\r", "\n" ), '', sprintf( '[Easy Maintenance Contact] Message from %s', $name ) ) );
         $body    = "Name: $name\n";
         $body   .= "Email: $email\n\n";
         $body   .= "Message:\n$message\n";
