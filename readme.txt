@@ -1,102 +1,149 @@
-=== Easy Maintenance Timer ===
+=== Easy Maintenance Mode, Coming Soon Page & Under Construction with Countdown Timer ===
 Contributors: abdulnasir1995
-Tags: Tags: maintenance mode, coming soon, under construction, elementor, woocommerce
+Tags: maintenance mode, coming soon, under construction, countdown timer, maintenance
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.03
+Stable tag: 1.04
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Zero-bloat maintenance mode with a countdown timer, 503 SEO headers, CSS animations, lead capture, and Elementor/WooCommerce compatibility.
+Ultra-fast Maintenance Mode, Coming Soon & Under Construction with countdown timer, 503 SEO headers, client secret bypass, and visitor lead capture.
 
 == Description ==
 
-Are you tired of "Coming Soon" and "Maintenance Mode" plugins that load megabytes of heavy page builders, aggressive upsells, and unnecessary scripts just to show a simple timer? 
+Are you tired of "Coming Soon" and "Maintenance Mode" plugins that load megabytes of heavy page builders, annoying upsells, and nag paywalls just to show a countdown timer? 
 
-**Easy Maintenance Timer** is the hyper-lightweight, developer-friendly alternative. Built strictly for performance and SEO optimization, this plugin lets you instantly lock down your site with a single click. It protects your search rankings with Google by sending a dynamic **503 Service Temporarily Unavailable header**, ensuring you don't lose your hard-earned SEO traffic while you update your website.
+**Easy Maintenance Timer** is the ultra-lightweight, developer-friendly alternative. Built strictly for speed, modern aesthetics, and SEO protection, this plugin lets you instantly put your website into **Maintenance Mode**, **Coming Soon Page**, or **Under Construction Mode** with a single click.
 
-Configure your custom maintenance message, upload your brand logo (or use our transparent SVG fallback), capture visitor emails, add pure CSS background animations, and set an expiration date—all from a native, lightning-fast WordPress settings page. No bloat, no premium add-ons, just a clean, highly functional maintenance screen that actually converts.
+It safeguards your search engine rankings by returning dynamic **503 Service Temporarily Unavailable** headers with an intelligent `Retry-After` calculation, telling Googlebot, Bing, and search crawlers exactly when to return.
+
+Capture visitor emails with the built-in lead subscription form, generate a secret client bypass link to showcase progress to clients without user accounts, enjoy pure CSS animations with zero external bloat, and preview changes in real time across Desktop, Tablet, and Mobile sandboxes.
+
+### 🌟 Why Choose Easy Maintenance Timer vs Competitors?
+
+| Feature | Easy Maintenance Timer | SeedProd / CMP / Competitors |
+| :--- | :--- | :--- |
+| **Pricing** | **100% FREE & Open Source** | \$49 – \$199/yr for basic features |
+| **Page Speed & Bloat** | **Ultra-lightweight (<40KB Frontend)** | Heavy 10MB+ page builders |
+| **Secret Client Bypass Link** | **Included Free** | Locked behind Pro paywall |
+| **Lead Capture & CSV Export** | **Included Free** | Locked behind Pro paywall |
+| **Webhook / Zapier Integration**| **Included Free** | Locked behind Pro paywall |
+| **503 SEO Header + Retry-After**| **Included Free** | Often incorrect 200 OK or Pro |
+| **Live In-Dashboard Sandbox** | **Included Free (Desktop/Tablet/Mobile)**| Basic or Paid |
+| **Admin Bar Quick-Toggle** | **Included Free** | Missing or Paid |
+| **Pure CSS Animated Backgrounds**| **Included Free** | Heavy JS or Pro |
+| **No Annoying Upsells / Ads** | **Guaranteed Clean** | Aggressive upgrade nags |
+
+---
+
+### 🚀 Powerful Features (Zero Bloat, 100% Free)
+
+* **One-Click Maintenance Mode:** Instantly toggle maintenance mode or under construction mode with a modern, intuitive switch in your WordPress dashboard or directly from the WordPress Admin Bar.
+* **Responsive Countdown Timer:** Display a real-time, synchronized countdown timer that automatically adapts to all screen sizes and device pixel ratios.
+* **Dynamic 503 SEO Header Protection:** Unlike basic plugins that return a 200 OK status (which risks Google indexing unfinished pages), this plugin returns a proper 503 HTTP status header with dynamic `Retry-After` headers matching your remaining timer.
+* **Secret Client Bypass Link:** Working with clients or external stakeholders? Generate a secure tokenized URL so they can review the live website without ever needing a WordPress user account.
+* **Lead Capture & 1-Click CSV Export:** Collect visitor email addresses with an integrated subscription form. View subscribers in your dashboard and export the entire list to CSV with one click.
+* **Webhook & CRM Integration:** Push captured subscriber emails in real-time via JSON POST webhooks directly to Zapier, Make, Mailchimp, HubSpot, or any custom API endpoint.
+* **Automated Subscriber Welcome Emails:** Send an instant auto-responder email to new subscribers confirming their subscription, with custom placeholders `{site_name}`, `{site_url}`, and `{email}`.
+* **Live In-Dashboard Preview Sandbox:** Test your maintenance page across interactive Desktop, Tablet, and Mobile viewport frames directly from your settings panel before taking it live.
+* **Admin Bar Status Indicator & Quick Toggle:** A discreet status badge in the top WordPress Admin Bar (`🔴 Maintenance ON` / `🟢 Site Live`) lets administrators check status and toggle maintenance mode from any page in 1 click.
+* **Search Engine Bot Whitelist:** Optionally allow legitimate crawlers (Googlebot, Bingbot, Baiduspider, Yandex, DuckDuckBot) to crawl your site uninterrupted during maintenance.
+* **Granular Role-Based Access Control:** Select which logged-in roles (Editors, Authors, Shop Managers) can bypass the maintenance screen and view the live website.
+* **IP Whitelisting:** Whitelist specific static or office IP addresses (IPv4 and IPv6) to allow direct frontend access.
+* **Scheduled Maintenance Window:** Set automated start and end timestamps so maintenance mode turns ON and OFF automatically without manual intervention.
+* **Smart Auto-Live & Admin Alerts:** When the countdown hits zero, maintenance mode automatically turns off and immediately sends an alert email to the site administrator.
+* **Passcode Bypass Form:** Allow authorized visitors to unlock the live website directly on the frontend by typing a private passcode.
+* **Pure CSS Animated Backgrounds:** Choose from Ken Burns Slow Zoom or dynamic CSS Gradient Shift backgrounds without loading heavy external JavaScript files.
+* **Open Graph & Twitter Social Cards:** Control the thumbnail image, title, and description displayed when your website link is shared on WhatsApp, Facebook, X (Twitter), LinkedIn, iMessage, and Slack.
+* **Instant Cache Flushing:** Hooks automatically into WP Rocket, LiteSpeed Cache, W3 Total Cache, and WordPress Object Cache to purge caches whenever the mode changes.
+* **Clean Data Uninstall:** Total control over your database. Enable the clean uninstall option to remove all stored options and subscriber tables upon removal.
+
+---
 
 ### 🌟 100% Theme, Builder & eCommerce Compatible
-We built Easy Maintenance Timer to seamlessly integrate with your existing tech stack. It works flawlessly out-of-the-box with:
-* **Page Builders:** Elementor, Divi, Beaver Builder, WPBakery, Oxygen, and the native Gutenberg block editor.
-* **eCommerce:** WooCommerce, Easy Digital Downloads (EDD), and SureCart. Background order processing and webhooks remain entirely uninterrupted while the frontend is hidden.
-* **Caching Engines:** WP Rocket, LiteSpeed Cache, W3 Total Cache, and server-level object caching.
 
-### 🚀 Detailed Core Features (Zero Bloat)
+Easy Maintenance Timer works seamlessly with your existing WordPress setup:
+* **Page Builders:** Elementor, Divi, Beaver Builder, WPBakery, Oxygen, Bricks, and Gutenberg Block Editor.
+* **eCommerce:** WooCommerce, Easy Digital Downloads (EDD), and SureCart. Background webhooks and payment processing are completely protected.
+* **Caching Engines:** WP Rocket, LiteSpeed Cache, W3 Total Cache, WP Super Cache, and Redis/Memcached.
 
-* **One-Click Maintenance Toggle:** Instantly put your site in maintenance or under-construction mode with a simple, modern UI switch.
-* **Smart Auto-Live & Admin Alerts:** Set your countdown end date and time. When the timer hits zero, the plugin automatically turns off maintenance mode, making your site public again, and instantly sends an email notification to the Site Admin.
-* **Lead Capture Form & CSV Export:** Don't lose potential customers while your site is under construction! Collect visitor email addresses with a built-in subscription form. Easily manage and export your entire list as a CSV file with one click.
-* **Premium Pure CSS Animated Backgrounds:** Impress visitors with modern, premium visual touches like a "Slow Zoom" (Ken Burns effect) or a dynamic "Color Gradient" background. These are built entirely with CSS, meaning zero external JavaScript bloat to slow down your page.
-* **Dynamic 503 SEO Headers:** Unlike cheap plugins that return 200 OK statuses (which ruins your SEO), this plugin calculates the exact downtime remaining on your timer and dynamically sets a `Retry-After` header. This tells Google exactly when to crawl your site again.
-* **Granular Role-Based Access Control:** Need your editorial team or shop managers to keep working? Easily select specific user roles (Authors, Editors, Shop Managers) that can bypass the maintenance screen and view the live site while logged in.
-* **Secret Client Bypass Link:** Working for a client? Generate a secure, tokenized URL to share with stakeholders. They can bypass the maintenance screen and view the under-construction site without ever needing a WordPress login!
-* **Social Media & Contact Integrations:** Grow your following even when offline. Easily add lightweight, transparent SVG icons linked to your Email, WhatsApp, Facebook, X (Twitter), LinkedIn, and Instagram.
-* **Custom CSS & Tracking Scripts:** Want to track traffic or run ads? Easily inject Google Analytics, Meta (Facebook) Pixels, TikTok pixels, or custom CSS directly into the maintenance page from the dashboard.
-* **Instant Cache Flushing:** Automatic cache purging ensures that the moment you toggle maintenance mode on or off, your visitors see the correct state immediately without seeing a cached version of your site.
-* **Clean Data Uninstall:** Keep your database clean. Use the built-in toggle to ensure all plugin data is wiped upon uninstallation, leaving zero orphaned rows behind.
-* **In-Dashboard Support:** Submit bug reports, feature requests, or direct support tickets to our team right from the plugin settings page.
-
-### 👨‍💻 Built for Ultimate Performance
-Easy Maintenance Timer strictly separates assets. It loads **zero CSS or JS files** on your live site when the maintenance mode is turned off. When active, frontend CSS is injected inline to prevent external HTTP requests. Built strictly following official WordPress Plugin Check (PCP) guidelines for maximum security, speed, and translation readiness.
+---
 
 == Installation ==
 
-**Option 1: Install via WordPress Dashboard (Recommended)**
-1. Log into your WordPress admin panel.
-2. Navigate to **Plugins > Add New**.
-3. In the search bar, type **Easy Maintenance Timer**.
-4. Locate the plugin (Author: abdulnasir1995) and click **Install Now**.
-5. Once installed, click **Activate**.
-6. Navigate to the new **Settings > Maintenance Mode** menu to configure your countdown, upload a logo, and toggle the mode **ON**.
+**Option 1: From WordPress Dashboard (Easiest)**
+1. In your WordPress admin, navigate to **Plugins > Add New**.
+2. Search for **Easy Maintenance Mode** or **Easy Maintenance Timer**.
+3. Click **Install Now**, then click **Activate**.
+4. Go to **Settings > Easy Maintenance** (or use the Admin Bar indicator) to configure your message, countdown timer, and turn the mode **ON**.
 
-**Option 2: Manual ZIP Installation**
-1. Download the `easy-maintenance-timer.zip` file from the WordPress repository.
-2. In your WordPress admin panel, go to **Plugins > Add New > Upload Plugin**.
-3. Choose the downloaded `.zip` file and click **Install Now**.
-4. Click **Activate**.
-5. Navigate to **Settings > Maintenance Mode**, enter your desired message and date, configure your lead capture, and save your changes.
+**Option 2: Manual Upload**
+1. Download the `easy-maintenance-timer.zip` archive.
+2. In your WordPress admin, go to **Plugins > Add New > Upload Plugin**.
+3. Select the zip file and click **Install Now**, then **Activate**.
+
+---
 
 == Frequently Asked Questions ==
 
-= Is it completely free? =
-Yes! There are no premium upsells, no "Pro" versions hidden behind a paywall, and no hidden charges. Every feature listed is 100% free and open-source.
+= Is Easy Maintenance Timer completely free? =
+Yes! 100% free with zero locked features, zero pro paywalls, and zero nag screens. Every feature listed is available out of the box.
 
-= Will this break my Elementor or WooCommerce setup? =
-Absolutely not. Easy Maintenance Timer is meticulously designed for high compatibility with all major page builders (Elementor, Divi, Beaver Builder) and eCommerce platforms (WooCommerce). It hides the frontend presentation while ensuring your backend and background processes run smoothly.
+= Will this hurt my Google rankings or SEO? =
+No, it is specifically designed to protect your SEO. The plugin returns a proper `503 Service Temporarily Unavailable` HTTP header with an accurate `Retry-After` response header. This instructs search engines that your site is undergoing planned maintenance and tells them when to crawl again. You can also toggle the Search Engine Bot Whitelist to keep Googlebot crawling uninterrupted.
 
-= Does this hurt my SEO? =
-No, it actually protects it. Easy Maintenance Timer specifically fires a proper `503 Service Temporarily Unavailable` HTTP header. Because you set a countdown timer, it dynamically calculates the exact number of seconds remaining and sets a `Retry-After` header. This explicitly tells search engines like Google that your site is down for planned updates and exactly when to check back, securing your current search rankings.
+= How do I share the under-construction website with my client? =
+Go to the **Access Control** card in the settings and copy your unique **Secret Client Bypass URL**. Send that link to your client; clicking it sets a secure authorization cookie allowing them to browse the live site without logging in.
 
-= Who can bypass the maintenance screen? =
-By default, Site Administrators bypass the screen automatically. In the settings, you can manually select other roles (like Editors, Shop Managers, or Subscribers) to bypass it. You can also use the **Secret Client Bypass URL** to let anyone view the site using a special link, without needing a WordPress account.
+= How do I export captured email subscribers? =
+In the plugin settings, scroll down to the **Subscribers** card and click the **Export to CSV** button to download your email subscriber list.
 
-= What happens when the countdown timer hits zero? =
-Unlike older plugins that require you to log back in, Easy Maintenance Timer features an intelligent auto-off function. When the countdown expires, the plugin automatically deactivates maintenance mode, restores your live site to the public, and immediately sends the Site Admin a "Website is Live" notification email.
+= Can I push subscribers to Zapier or Mailchimp? =
+Yes! Enable the Webhook integration in the Subscribers card and paste your Zapier / Make / Webhook URL. Whenever a visitor submits their email, the data is pushed immediately as a JSON POST request.
 
-= How do I export the captured email leads? =
-If you enable the Lead Capture Form, visitors can subscribe to be notified when you launch. Simply go to **Settings > Maintenance Mode**, scroll to the Lead Capture section, and click the **Export CSV** button to download your entire subscriber list instantly.
+= What happens when the countdown timer ends? =
+When the countdown expires, the plugin automatically disables maintenance mode, restores the live website to the public, and sends an automated email notification to the site administrator.
 
-= Can I track visitors while the site is under construction? =
-Yes! There is a dedicated "Custom Scripts" text box in the settings. You can paste your Google Analytics tracking code, Meta Pixel, or any other JavaScript tracking snippet directly into this box to monitor traffic during your downtime.
+= Does this plugin slow down my live website? =
+Not at all. When maintenance mode is disabled, the plugin loads **zero CSS and zero JavaScript files** on your frontend. When active, all styles are rendered inline for instantaneous rendering (<40KB total weight).
 
-= Does the animated background slow down my site? =
-Not at all. The premium animations (like the Ken Burns zoom and the color gradient) are built using 100% pure CSS. There are zero bulky JavaScript libraries loaded, ensuring the maintenance page renders instantly on desktop and mobile devices.
-
-= Will changes show up immediately if I use caching? =
-Yes. The plugin hooks directly into major caching engines (WP Rocket, LiteSpeed Cache, W3 Total Cache, and standard object caches). When you toggle the maintenance mode on or off, it forces a cache flush so your visitors see the correct state immediately.
+---
 
 == Screenshots ==
-1. **General Settings:** Easily toggle maintenance mode, configure the live countdown timer, and customize your logo and background animations with a modern UI.
-2. **Access Control (Bypass):** Generate a secret client bypass URL and select the specific user roles that are allowed to view the live site.
-3. **Lead Capture & CSV Export:** Easily view and export the list of visitors who subscribed to be notified when your site goes live.
-4. **Front End Display:** The clean, responsive, visitor-facing maintenance page featuring the active countdown timer, subscriber form, pure CSS background, and social contact buttons.
+
+1. **Dashboard & General Settings:** Simple 1-click maintenance toggle, live countdown timer, and branding controls.
+2. **Interactive Live Preview Sandbox:** Real-time preview with Desktop, Tablet, and Mobile responsive view switchers.
+3. **Granular Access Control:** Secret client bypass URL generator, user role permissions, and IP whitelisting.
+4. **Subscriber Management & CSV Export:** Real-time subscriber table, CSV exporter, and automated webhook integration.
+
+---
 
 == Changelog ==
 
-= 1.03 (11 June 2026) =
+= 1.04 (10 November 2026) =
+* **Feature:** Added WordPress Admin Bar quick status badge (`🔴 Maintenance ON` / `🟢 Site Live`) with 1-click toggle and preview actions.
+* **Feature:** Added In-Dashboard Live Preview Sandbox with interactive Desktop, Tablet, and Mobile responsive view switchers.
+* **Feature:** Added Open Graph & Twitter Social Card Meta Tags for rich link preview banners when sharing on WhatsApp, Facebook, X, and LinkedIn.
+* **Feature:** Added Webhook Integration (instantly push captured leads via asynchronous JSON POST payloads to Zapier, Make, Mailchimp, or custom CRMs).
+* **Feature:** Added Subscriber Welcome / Confirmation Auto-Responder Email with customizable template tags ({site_name}, {site_url}, {email}).
+* **Feature:** Added Search Engine Bot Whitelist toggle to allow Googlebot, Bingbot, Baiduspider, Yandex, and DuckDuckBot to crawl without interruption.
+* **Feature:** Added Mode Type Selection (Switch between SEO 503 Maintenance Mode and Indexable 200 Coming Soon Mode).
+* **Feature:** Added Frontend Layout Presets (Modern Centered Card, Left-Split Screen, and Minimalist Focus layouts).
+* **Feature:** Added Scheduled Maintenance Window (automated start date/time and end date/time execution).
+* **Feature:** Added Google Fonts integration, Video Backgrounds (YouTube & MP4), Progress Completion Bar, and Passcode / Password Bypass.
+* **Feature:** Added Page Exclusions whitelist, Social Share buttons, Landing Page Contact Us form, and Conversion Analytics.
+* **Feature:** Added non-intrusive 5-star review request notice in admin settings to support community development.
+* **Feature:** Added optional "Powered by Easy Maintenance Timer" viral growth attribution badge.
+* **Feature:** Added complete internationalization (`languages/easy-maintenance-timer.pot`) for WordPress Polyglots community translations.
+* **Security:** Cryptographic 32-hex client bypass secret token with constant-time HMAC cookie verification (`hash_equals`).
+* **Security:** Hardened TCP `REMOTE_ADDR` IP spoofing mitigation, CSV Formula Injection defense (CWE-1236), and Webhook SSRF validation.
+* **Improvement:** Refactored entire codebase to clean PSR-4-compatible Object-Oriented Architecture with autoloader, controller classes, and template views.
+* **Improvement:** 100% strict compliance with official WordPress Plugin Check (PCP) guidelines (0 Errors, 0 Warnings).
+* **Fix:** Resolved global timezone discrepancies by converting dates to Unix timestamp in milliseconds for 100% synchronized countdown timers across all client timezones.
+* **Fix:** Fixed settings save lockout bug where disabled form controls were omitted from POST submission when maintenance mode was inactive.
+
+= 1.03 (15 June 2026) =
 * **Feature:** Added Pure CSS Animated Backgrounds (Ken Burns Slow Zoom & Smooth Gradients) for a premium UI without JS bloat.
 * **Feature:** Added Lead Capture Form (Collect visitor emails with 1-click CSV export capability).
 * **Feature:** Added Auto-Live Email Notification (Instantly notifies the site admin when the timer ends and the site goes public).

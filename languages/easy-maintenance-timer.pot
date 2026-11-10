@@ -1,0 +1,936 @@
+# Copyright (C) 2026 Abdul Nasir
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Easy Maintenance Timer 1.04\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/easy-maintenance-timer\n"
+"Last-Translator: Abdul Nasir\n"
+"Language-Team: English <support@easy-maintenance.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-10T07:53:04+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: Custom POT Generator\n"
+"X-Domain: easy-maintenance-timer\n"
+
+#: includes/class-admin-controller.php
+msgid "%d settings successfully imported and verified!"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "(Remember to save changes to see recent updates)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Access Control"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Access Control (Bypass Rules)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Active (Locked)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Add My IP"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Add a modern, 100% pure CSS animation to your background without slowing down the site."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Add your own custom CSS rules to fine-tune the maintenance page styling."
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "All fields are required."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Allow these roles to bypass:"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Allows verified search engine crawlers (Googlebot, Bingbot, Baiduspider, Yandex, DuckDuckBot) to bypass the maintenance screen to prevent indexing interruptions."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Allows visitors to enter this simple password on the landing page to bypass maintenance mode."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Allows visitors to submit messages directly from the maintenance page. Emails will be sent to this destination inbox."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Animated Color Gradient (Image ignored)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Auto-Live Email Notification"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Automatically activate and deactivate maintenance mode between these dates. Leaves manual override enabled if blank."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Automatically send a confirmation email to new subscribers."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Background Animation"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Background Image"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Background Overlay"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Background Video URL"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Block REST API"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Brief description for search engine results to maintain SEO during downtime..."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Bug Report"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "CSS & Tools"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Changes take effect immediately after saving."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Classic Serif"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Clean Data on Uninstall"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Coming Soon (200 OK - Indexable)"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Completed"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Contact Form Destination Email:"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Contact Us"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Control the image, title, and description displayed when your website link is shared on WhatsApp, Facebook, X (Twitter), LinkedIn, iMessage, and Slack."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Conversion Rate"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Could not read uploaded file content."
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Could you tell us more details? Any suggestions help us improve!"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Countdown End Date/Time"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Custom CSS"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Custom Styles & Tracking Scripts"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Custom Tracking Scripts"
+msgstr ""
+
+#: includes/class-database-manager.php
+msgid "Database table missing."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Date Subscribed"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Default Centered (Modern Card)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Description"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Desktop"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Desktop View (100%)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Display a subtle \"Powered by Easy Maintenance Timer\" badge at the bottom of the maintenance screen. Helps support our free, zero-bloat development!"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Displays a visual completion progress bar on your landing page."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Displays social sharing buttons (Facebook, X/Twitter, LinkedIn, WhatsApp) on the landing page."
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Don't deactivate"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Easy Maintenance"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Easy Maintenance Mode Settings"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Easy Maintenance Settings"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Email Address"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Email Body:"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Email Subject:"
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Email address exceeds maximum length of 100 characters."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enable Contact Icons"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enable GDPR Consent Checkbox"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enable Landing Page Contact Form"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enable Maintenance Mode"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enable Social Sharing"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enable Subscription Form"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enter a brief description... e.g. We are upgrading our systems."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enter one IP address per line."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enter one URL path per line."
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Enter passcode to bypass"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Enter passcode..."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Enter your Google Analytics, Meta Pixel, or custom JS tracking snippet..."
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Enter your email address..."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Export CSV"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Export Settings (JSON)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Export your current configuration to a JSON backup file, or migrate settings to/from another WordPress installation."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Facebook URL"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Failed to send feedback."
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Failed to send message. Please check your server email configurations."
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Failed to send message. Please try again later."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Feature Request"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "File exceeds maximum allowed size (1 MB)."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "General Settings"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "General Support"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "GitHub Repository"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Google Font Integration"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "How can we help?"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "I Already Did"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "I miss a specific feature"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "I switched to another plugin"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "ID"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "IP Whitelist"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "If set, visitors are automatically redirected to this URL client-side once the countdown finishes."
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "If this plugin is helping you build or update your website, could you spare 30 seconds to leave a 5-star rating on WordPress.org? Your review helps keep this plugin 100% free with zero bloat and no paywalls!"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "If you encounter any issues, have a feature request, or want to review the code, check out our repository or reach out directly!"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "If you have a moment, please let us know why you are deactivating Easy Maintenance Timer:"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Import Settings (JSON)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Inactive (Public)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Injected safely into the maintenance page head for analytics and tracking."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Instagram URL"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Invalid file format. Only .json configuration files are permitted."
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Invalid or corrupted configuration JSON."
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "It is only temporary (debugging or updates)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Layout Preset Style"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Lead Capture & Email Subscribers"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Leave a 5-Star Review"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Leave blank for clean SVG icon"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Leave blank to use SEO Meta Description"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Leave blank to use SEO Page Title"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Left-Split Screen Page"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "LinkedIn URL"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Live Preview (New Tab)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Live Preview Sandbox"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Loads the selected web font dynamically from Google Fonts on the landing page."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Logo URL"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Loving Easy Maintenance Timer?"
+msgstr ""
+
+#: includes/class-frontend-controller.php, templates/settings-page-view.php
+msgid "Maintenance"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Maintenance / launch finished, no longer needed"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Maintenance Message"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Maintenance Mode (503 Error - SEO Safe)"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Maintenance Mode is currently active"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Maintenance OFF"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Maintenance ON"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Maintenance Status"
+msgstr ""
+
+#: includes/class-frontend-controller.php
+msgid "Maintenance complete!"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Make sure to Save Changes before previewing!"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Maybe Later"
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Message field cannot be empty."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Minimalist Focus Page"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Mobile"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Mobile View (375px)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Mode Type"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Modern Sans-Serif"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Monospace / Code"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Native OS fonts that load instantly without external requests (Zero Bloat)."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Need Help or Want to Contribute?"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Network error."
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "No recognized settings found in the uploaded file."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "No subscribers yet."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "None (Static)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "None (Use typography style above)"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Notify Me"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "ON/OFF"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Opacity:"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Other reason"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Page Exclusions"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Passcode Bypass"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Please choose a configuration file to upload."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Please describe your issue or feature request in detail..."
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Powered by Easy Maintenance Timer"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Preview Sandbox"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Preview the maintenance page directly inside the dashboard"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Progress Bar Indicator"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Progress Percentage:"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Quick Feedback"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Recommended: 1200x630px image"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Redirect URL on Expiry"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Reload Preview"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "SEO Meta Description"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "SEO Page Title"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Save All Changes"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Scheduled Maintenance Window"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Search Engine Bot Whitelist"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Secret Client Bypass URL:"
+msgstr ""
+
+#: includes/class-frontend-controller.php
+msgid "Security check failed. Please refresh the page and try again."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Select"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Select or Upload Background"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Select or Upload Logo"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Select or Upload Social Preview Image"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Select the visual layout preset layout style for the frontend maintenance page."
+msgstr ""
+
+#: templates/frontend-view.php, templates/settings-page-view.php
+msgid "Send Message"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Send an automatic email to the site admin when the timer ends and the site goes live."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Send new leads directly to Zapier, Make, Mailchimp, or custom CRM via an instant JSON POST webhook payload."
+msgstr ""
+
+#: easy-maintenance-timer.php
+msgid "Settings"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Settings Import & Export Tools"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Share on Facebook"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Share on LinkedIn"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Share on WhatsApp"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Share on X"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Share this page:"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Share this unique cryptographic token link with clients or stakeholders to bypass the maintenance screen without requiring a WordPress user login."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Show \"Powered by\" Badge"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Site is currently live to the public"
+msgstr ""
+
+#: includes/class-frontend-controller.php
+msgid "Site is currently under maintenance."
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Skip & Deactivate"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Slow Zoom (Ken Burns Effect - Needs Image)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Social & Sharing"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Social Banner Image"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Social Preview Description"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Social Preview Title"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Social, Contact & Sharing Links"
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Specified pages will remain accessible to the public. Leave blank to block the whole site."
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Submit"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Submit & Deactivate"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Submit a Support Ticket"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Subscriber Welcome Email"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Subscribers"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Subscribers Captured"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Subscribers List"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Support & Help"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Supported template tags: {site_name}, {site_url}, {email}"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Supports YouTube video links or direct links to hosted MP4 video files."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "System Default (Fastest)"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Tablet"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Tablet View (768px)"
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Technical issue / Bug encountered"
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Thank you for subscribing! We will notify you."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Total Page Views"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Type of Inquiry"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Typography Style"
+msgstr ""
+
+#: includes/class-admin-controller.php, includes/class-ajax-handler.php, includes/class-database-manager.php
+msgid "Unauthorized access."
+msgstr ""
+
+#: includes/class-deactivation-feedback.php
+msgid "Unauthorized action."
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "Upload validation failed. Please try again."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Use \"Maintenance\" for temporary downtime. Use \"Coming Soon\" if your site is brand new and you want Google to index it."
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Webhook Integration URL"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "WhatsApp Number"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "X (Twitter) URL"
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "You are already subscribed!"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Your Email Address"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Your Message"
+msgstr ""
+
+#: templates/frontend-view.php
+msgid "Your Name"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "Your current IP address is:"
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Your message has been sent successfully!"
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "Your message has been sent successfully! We will get back to you soon."
+msgstr ""
+
+#: includes/class-ajax-handler.php
+msgid "[%s] Thank you for subscribing!"
+msgstr ""
+
+#: includes/class-frontend-controller.php
+msgid "[%s] 🚀 Your Website is now LIVE!"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "⚙️ Maintenance Settings"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "👁️ Preview Maintenance Screen"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "🔴 Turn Maintenance ON"
+msgstr ""
+
+#: templates/settings-page-view.php
+msgid "🖼️ Open Graph & Social Preview Card"
+msgstr ""
+
+#: includes/class-admin-controller.php
+msgid "🟢 Turn Site Live (Disable)"
+msgstr ""
+
