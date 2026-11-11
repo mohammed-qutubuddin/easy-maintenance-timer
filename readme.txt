@@ -116,6 +116,7 @@ Not at all. When maintenance mode is disabled, the plugin loads **zero CSS and z
 2. **Interactive Live Preview Sandbox:** Real-time preview with Desktop, Tablet, and Mobile responsive view switchers.
 3. **Granular Access Control:** Secret client bypass URL generator, user role permissions, and IP whitelisting.
 4. **Subscriber Management & CSV Export:** Real-time subscriber table, CSV exporter, and automated webhook integration.
+5. **Visitor-Facing Maintenance Display:** Clean, responsive maintenance page featuring the active countdown timer, subscription form, and social links.
 
 ---
 
