@@ -121,7 +121,7 @@ Not at all. When maintenance mode is disabled, the plugin loads **zero CSS and z
 
 == Changelog ==
 
-= 1.04 (10 November 2026) =
+= 1.04 (11 November 2026) =
 * **Feature:** Added WordPress Admin Bar quick status badge (`🔴 Maintenance ON` / `🟢 Site Live`) with 1-click toggle and preview actions.
 * **Feature:** Added In-Dashboard Live Preview Sandbox with interactive Desktop, Tablet, and Mobile responsive view switchers.
 * **Feature:** Added Open Graph & Twitter Social Card Meta Tags for rich link preview banners when sharing on WhatsApp, Facebook, X, and LinkedIn.
